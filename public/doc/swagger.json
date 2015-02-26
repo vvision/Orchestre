@@ -1,0 +1,701 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Orchestre API",
+    "description": "Discover and try Orchestre API here.",
+    "termsOfService": "",
+    "contact": {
+      "name": "vvoisin",
+      "mail": "contact@unicoda.com"
+    },
+    "license": {
+      "name": "GNU GPL"
+    },
+    "version": "2"
+  },
+  "consumes": ["application/json"],
+  "produces": ["application/json"],
+  "paths": {
+
+    "/songs": {
+      "get": {
+        "tags": ["Songs"],
+        "summary": "Lists song.",
+        "description": "Get a list of songs.",
+        "operationId": "songs",
+        "parameters": [{
+          "name": "q",
+          "in": "query",
+          "type": "string",
+          "description": "Query filter.",
+          "required": false
+        }],
+        "responses": {
+          "200": {
+            "description": "Array of song.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Song"
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+
+    "/songs/{id}": {
+      "get": {
+        "tags": ["Songs"],
+        "summary": "Data of song.",
+        "description": "",
+        "operationId": "aboutSong",
+        "parameters": [{
+          "name": "id",
+          "in": "path",
+          "type": "string",
+          "description": "ID of song.",
+          "required": true
+        }],
+        "responses": {
+          "200": {
+            "description": "Data concerning the song."
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+
+    "/songs/{id}/title": {
+      "get": {
+        "tags": ["Songs"],
+        "summary": "Title of song.",
+        "description": "",
+        "operationId": "songTitle",
+        "parameters": [{
+          "name": "id",
+          "in": "path",
+          "type": "string",
+          "description": "ID of song.",
+          "required": true
+        }],
+        "responses": {
+          "200": {
+            "description": "Title of song."
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+
+    "/songs/{id}/artist": {
+      "get": {
+        "tags": ["Songs"],
+        "summary": "Artist of song.",
+        "description": "",
+        "operationId": "songArtist",
+        "parameters": [{
+          "name": "id",
+          "in": "path",
+          "type": "string",
+          "description": "ID of song.",
+          "required": true
+        }],
+        "responses": {
+          "200": {
+            "description": "Artist of song."
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+
+    "/songs/{id}/album": {
+      "get": {
+        "tags": ["Songs"],
+        "summary": "Album of song.",
+        "description": "",
+        "operationId": "songAlbum",
+        "parameters": [{
+          "name": "id",
+          "in": "path",
+          "type": "string",
+          "description": "ID of song.",
+          "required": true
+        }],
+        "responses": {
+          "200": {
+            "description": "Album of song."
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+
+    "/songs/{id}/track": {
+      "get": {
+        "tags": ["Songs"],
+        "summary": "TrackNumber of song.",
+        "description": "",
+        "operationId": "trackNumber",
+        "parameters": [{
+          "name": "id",
+          "in": "path",
+          "type": "string",
+          "description": "ID of song.",
+          "required": true
+        }],
+        "responses": {
+          "200": {
+            "description": "TrackNumber of song."
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+
+    "/songs/{id}/rate": {
+      "get": {
+        "tags": ["Songs"],
+        "summary": "Rate of song.",
+        "description": "",
+        "operationId": "songRate",
+        "parameters": [{
+          "name": "id",
+          "in": "path",
+          "type": "string",
+          "description": "ID of song.",
+          "required": true
+        }],
+        "responses": {
+          "200": {
+            "description": "Rate of song."
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+
+    "/songs/{id}/genre": {
+      "get": {
+        "tags": ["Songs"],
+        "summary": "Genre of song.",
+        "description": "",
+        "operationId": "songGenre",
+        "parameters": [{
+          "name": "id",
+          "in": "path",
+          "type": "string",
+          "description": "ID of song.",
+          "required": true
+        }],
+        "responses": {
+          "200": {
+            "description": "Genre of song."
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+
+    "/songs/{id}/rate/dec": {
+      "post": {
+        "tags": ["Songs"],
+        "summary": "Decrement rate of song.",
+        "description": "Decrement rate of song by 1.",
+        "operationId": "decrementRate",
+        "security": [
+          {
+            "basicAuth": []
+          }
+        ],
+        "parameters": [{
+          "name": "id",
+          "in": "path",
+          "type": "string",
+          "description": "ID of song.",
+          "required": true
+        }],
+        "responses": {
+          "200": {
+            "description": "Rate of song decremented."
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+
+    "/songs/{id}/rate/inc": {
+      "post": {
+        "tags": ["Songs"],
+        "summary": "Increment rate of song.",
+        "description": "Increment rate of song by 1.",
+        "operationId": "incrementRate",
+        "security": [
+          {
+            "basicAuth": []
+          }
+        ],
+        "parameters": [{
+          "name": "id",
+          "in": "path",
+          "type": "string",
+          "description": "ID of song.",
+          "required": true
+        }],
+        "responses": {
+          "200": {
+            "description": "Rate of song incremented."
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+
+
+
+
+
+
+
+    "/artists": {
+      "get": {
+        "tags": ["Artists"],
+        "summary": "Lists artist.",
+        "description": "Get a list of artists.",
+        "operationId": "artists",
+        "parameters": [{
+          "name": "q",
+          "in": "query",
+          "type": "string",
+          "description": "Query filter.",
+          "required": false
+        }],
+        "responses": {
+          "200": {
+            "description": "Array of artists.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Artist"
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+
+    "/artists/{id}": {
+      "get": {
+        "tags": ["Artists"],
+        "summary": "Data of artist.",
+        "description": "",
+        "operationId": "aboutArtist",
+        "parameters": [{
+          "name": "id",
+          "in": "path",
+          "type": "string",
+          "description": "ID of artist.",
+          "required": true
+        }],
+        "responses": {
+          "200": {
+            "description": "Data concerning the artist."
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+
+    "/artists/{id}/albums": {
+      "get": {
+        "tags": ["Artists"],
+        "summary": "Albums of an artist.",
+        "description": "",
+        "operationId": "albumsFromArtist",
+        "parameters": [{
+          "name": "id",
+          "in": "path",
+          "type": "string",
+          "description": "ID of artist.",
+          "required": true
+        }],
+        "responses": {
+          "200": {
+            "description": "Array of albums.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Album"
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+
+
+
+
+
+
+
+
+    "/albums": {
+      "get": {
+        "tags": ["Albums"],
+        "summary": "Lists albums.",
+        "description": "Get a list of albums.",
+        "operationId": "albums",
+        "parameters": [{
+          "name": "q",
+          "in": "query",
+          "type": "string",
+          "description": "Query filter.",
+          "required": false
+        }],
+        "responses": {
+          "200": {
+            "description": "Array of albums.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Album"
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+
+    "/albums/{id}": {
+      "get": {
+        "tags": ["Albums"],
+        "summary": "Data of album.",
+        "description": "",
+        "operationId": "aboutAlbum",
+        "parameters": [{
+          "name": "id",
+          "in": "path",
+          "type": "string",
+          "description": "ID of album.",
+          "required": true
+        }],
+        "responses": {
+          "200": {
+            "description": "Data concerning the album."
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+
+    "/albums/{id}/songs": {
+      "get": {
+        "tags": ["Albums"],
+        "summary": "Songs of an album.",
+        "description": "",
+        "operationId": "songsFromAlbum",
+        "parameters": [{
+          "name": "id",
+          "in": "path",
+          "type": "string",
+          "description": "ID of album.",
+          "required": true
+        }],
+        "responses": {
+          "200": {
+            "description": "Array of songs.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Song"
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+
+
+
+
+
+
+    "/auth/login": {
+      "get": {
+        "tags": ["Auth"],
+        "summary": "Login.",
+        "description": "Login.",
+        "operationId": "login",
+        "parameters": [{
+          "name": "login",
+          "in": "body",
+          "type": "string",
+          "description": "Username.",
+          "required": true
+        },
+        {
+          "name": "password",
+          "in": "body",
+          "type": "string",
+          "description": "SHA1 Encrypted password.",
+          "required": true
+        }],
+        "responses": {
+          "200": {
+            "description": "Status."
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+
+    "/auth/logout": {
+      "get": {
+        "tags": ["Auth"],
+        "summary": "Logout.",
+        "description": "Logout.",
+        "operationId": "logout",
+        "responses": {
+          "200": {
+            "description": "Status."
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+
+
+
+
+
+
+
+
+
+
+    "/scan": {
+      "get": {
+        "tags": ["Scan"],
+        "summary": "Scan music",
+        "description": "Scan your entire music library.",
+        "operationId": "scan",
+        "responses": {
+          "200": {
+            "description": "Scan Status."
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    }
+
+
+  },
+  "securityDefinitions": {
+    "basicAuth": {
+      "type": "basic",
+      "description": "Log in with a user/password."
+    },
+    "internalApiKey": {
+      "type": "apiKey",
+      "in": "header",
+      "name": "api_key"
+    }
+  },
+  "definitions": {
+    "Song": {
+      "properties": {
+        "_id": {
+          "type": "string",
+          "description": "Id of song."
+        },
+        "title": {
+          "type": "string",
+          "description": "Title of song."
+        },
+        "rate": {
+          "type": "integer",
+          "description": "Rate of song (0 to 5)."
+        },
+        "trackNumber": {
+          "type": "integer",
+          "description": "TrackNumber of song."
+        },
+        "artist": {
+          "type": "string",
+          "description": "Artist of song."
+        },
+        "album": {
+          "type": "string",
+          "description": "Album of song."
+        },
+        "genre": {
+          "type": "string",
+          "description": "Genre of song."
+        }
+      }
+    },
+    "Album": {
+      "properties": {
+        "_id": {
+          "type": "string",
+          "description": "Id of album."
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of album."
+        },
+        "year": {
+          "type": "string",
+          "description": "Year of release."
+        },
+        "artist": {
+          "type": "string",
+          "description": "Artist of album."
+        }
+      }
+    },
+    "Artist": {
+      "properties": {
+        "_id": {
+          "type": "string",
+          "description": "Id of artist."
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of artist."
+        }
+      }
+    },
+    "Genre": {
+      "properties": {
+        "_id": {
+          "type": "string",
+          "description": "Id of genre."
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of genre."
+        }
+      }
+    },
+    "Error": {
+      "properties": {
+        "status": {
+          "type": "string",
+          "description": "Status description."
+        },
+        "err": {
+          "type": "string",
+          "description": "Error description."
+        },
+        "request_id": {
+          "type": "string",
+          "description": "Not implemented."
+        }
+      }
+    }
+  }
+
+}

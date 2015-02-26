@@ -1,0 +1,39 @@
+{
+  "name": "Orchestre",
+  "version": "0.1.0",
+  "author": "vvision <email>vvision@sfr.fr</email>",
+  "description": "Orchestre is a streaming plateform which focus on playing flac files in the browser.",
+  "license": "GPL-3.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vvision/Orchestre"
+  },
+  "bugs": {
+    "url": "https://github.com/vvision/Orchestre/issues"
+  },
+  "engine": {
+    "node": "&gt;=0.10"
+  },
+  "main": "node orchestre.js",
+  "dependencies" : {
+    "express": "4.10.4",
+    "body-parser": "1.0.2",
+    "multiparty": "3.2.4",
+    "cookie-parser": "1.0.1",
+    "cookie-session": "1.0.1",
+    "morgan": "1.0.0",
+    "async": "0.8.0",
+    "npmlog": "0.0.6",
+    "mongoose": "3.8.21",
+    "taglib": "0.8.0"
+  },
+  "devDependencies": {
+    "mocha": "1.21.4",
+    "chai": "1.0.4",
+    "request": "2.34.0"
+  },
+  "scripts": {
+    "start": "node ./orchestre.js",
+    "test": " mocha -R spec ./test/*.js"
+  }
+}

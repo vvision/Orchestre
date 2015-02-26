@@ -1,0 +1,74 @@
+body {
+  background-color: #333;
+  color:#fff;
+    
+  /*
+   * Required by fixed navbar.
+   * Should be include after the core Bootstrap CSS.
+   */
+  /*padding-top: 50px;*/
+  padding-bottom: 60px;
+}
+
+.block {
+  background-color: rgba(0, 0, 0, 0.3);
+  padding-left: 12px;
+  padding-right: 12px;
+}
+
+.credit {
+  margin: 20px 0;
+}
+
+.miniAlbumImg {
+  width: 100px;
+  height: 100px;
+}
+
+.loginForm {
+  margin-bottom: 15px;
+}
+
+/*Overload bootstrap form css*/
+input, textarea{
+    background-color: #5A5A5A;
+    color: #FFF;
+}
+::-webkit-input-placeholder { /* WebKit browsers */
+    color:    #FFF;
+}
+:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+    color:    #FFF;
+}
+::-moz-placeholder { /* Mozilla Firefox 19+ */
+    color:    #FFF;
+}
+:-ms-input-placeholder { /* Internet Explorer 10+ */
+    color:    #FFF;
+}
+
+/*Unsupported Audio API*/
+#unsupported {
+    display: none;
+    font-family: Helvetica, Arial, sans-serif;
+    top: 0;
+    margin: 10px;
+    padding: 10px;
+    color: white;
+    text-shadow: black 0 1px 3px;
+    background: #c50202;
+    background: -webkit-linear-gradient(#c50202, #950202);
+    background: -moz-linear-gradient(#c50202, #950202);
+    background: -o-linear-gradient(#c50202, #950202);
+    box-shadow: black 0 1px 10px;
+    -webkit-box-shadow: black 0 1px 10px;
+    -moz-box-shadow: black 0 1px 10px;
+    border-radius: 5px;
+}
+#unsupported a {
+	color: white;
+}
+.unsupported #unsupported {
+    display: block;
+}
+

@@ -1,0 +1,21 @@
+<tr class="song {{songId}}">
+  <td>
+    <button type="button" class="play {{songId}} btn btn-info btn-sm">
+      <span class="glyphicon glyphicon-play"></span>
+    </button>
+  </td>
+  <td>
+    <button type="button" class="add {{songId}} btn btn-info btn-sm">
+      <span class="glyphicon glyphicon-plus"></span>
+    </button>
+  </td>
+  <td class="track">{{trackNumber}}</td>
+  <td class="title">{{songTitle}}</td>
+  <td class="artist {{artistId}}">{{artistName}}</td>
+  <td class="album {{albumId}}">{{albumTitle}}</td>
+  <td class="rateInfo {{songId}}">
+    <button type="button" class="rateDec btn btn-info btn-sm">-</button>
+    <span class="rate {{songId}} badge">{{rated}}</span>
+    <button type="button" class="rateInc btn btn-info btn-sm">+</button>
+  </td>
+</tr>
