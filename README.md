@@ -3,8 +3,8 @@ Orchestre
 
 Orchestre is a streaming plateform which focus on being able to play flac files in the browser.
 
-# Installation
 
+# Installation
 
 * Clone it.
 * Change directory: cd Orchestre.
@@ -14,19 +14,19 @@ Orchestre is a streaming plateform which focus on being able to play flac files 
 
 I recommend using a tool like *forever* to run the server.
 
-# Requirements
 
+# Requirements
 
 * Node.Js
 * MongoDB
-* [Taglib](https://github.com/taglib/taglib.git)
+
 
 # Configuration
-
 
 Some parameters are available in *config.json*. To change the password, use `node hashPass.js myNewPassword` to generate the hash and modified it in the configuration file.
 
 Do not forget to change `musicPath`.
+
 
 # License
 

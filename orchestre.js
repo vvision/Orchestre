@@ -51,7 +51,7 @@ app.use(function(err, req, res, next) {
     case 401:
       res.status(401).send({
         status: 'Unauthorized',
-        err: err.message || 'Please log in.',
+        err: err.message || 'Please sign in.',
         requestId: ''
       });
       break;

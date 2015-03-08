@@ -28,25 +28,18 @@ var removeDatabases = function(callback) {
 };
 
 function scan(req, res) {
-  //Let's drop the DB
-  removeDatabases(function() {
-    console.log('REMOVED');
-    scanning.scanDir(conf.musicPath, conf.extensions, function(err) {
-      console.log('ALL DIRECTORIES SCANNED!');
+  scanning.scanDir(conf.musicPath, conf.extensions, function(err) {
+    console.log('ALL DIRECTORIES SCANNED!');
+    var resp = {};
     if (err) {
       throw err;
-      var resp = {
-        status: 'Internal Server Error',
-        message: 'An error occured!'
-      };
+      resp.status = 'Internal Server Error';
+      resp.message = 'An error occurred!';
       res.status(500).send(resp);
     } else {
-      var resp = {
-        status: 200,
-        message: 'Database populated!'
-      };
+      resp.status = 200;
+      resp.message = 'Database populated!';
       res.send(resp);
     }
-    });
   });
 }

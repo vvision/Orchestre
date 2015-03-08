@@ -1,11 +1,75 @@
 var fs = require('fs');
 var async = require('async');
-var taglib = require('taglib');
+var musicmetadata = require('musicmetadata');
 var mongoose = require('mongoose');
 var Song = mongoose.model('Song');
 var Artist = mongoose.model('Artist');
 var Album = mongoose.model('Album');
 var Genre = mongoose.model('Genre');
+
+var upsertSong = function(song, cb) {
+  song = song.toObject();
+  delete song._id;
+  Song.findOneAndUpdate(
+    {title: song.title, artist: song.artist},
+    song,
+    {upsert: true},
+    function(err, doc) {
+      if(err) {
+        console.log(err);
+      }
+      console.log(doc);
+      cb(doc);
+  });
+};
+
+var upsertAlbum = function(album, cb) {
+  album = album.toObject();
+  delete album._id;
+  Album.findOneAndUpdate(
+    {name: album.name},
+    album,
+    {upsert: true},
+    function(err, doc) {
+      if(err) {
+        console.log(err);
+      }
+      console.log(doc);
+      cb(doc);
+  });
+};
+
+var upsertArtist = function(artist, cb) {
+  artist = artist.toObject();
+  delete artist._id;
+  Artist.findOneAndUpdate(
+    {name: artist.name},
+    artist,
+    {upsert: true},
+    function(err, doc) {
+      if(err) {
+        console.log(err);
+      }
+      console.log(doc);
+      cb(doc);
+  });
+};
+
+var upsertGenre = function(genre, cb) {
+  genre = genre.toObject();
+  delete genre._id;
+  Genre.findOneAndUpdate(
+    {name: genre.name},
+    genre,
+    {upsert: true},
+    function(err, doc) {
+      if(err) {
+        console.log(err);
+      }
+      console.log(doc);
+      cb(doc);
+  });
+};
 
 var scanDir = function (path, allowedExtension, callback) {
   path += '/';
@@ -34,35 +98,41 @@ var scanDir = function (path, allowedExtension, callback) {
 
           //Get metadata from the file
           //console.log(path + el);
-          var tag = taglib.tagSync(path + el);
-          console.log(tag);
-          //Insert in DB
-          var artist = new Artist({
-            name: tag.artist
-          });
-          var genre = new Genre({
-            name: tag.genre
-          });
-          var album = new Album({
-            name: tag.album,
-            year: 0,
-            artist: tag.artist
-          });
-          var song = new Song({
-            fileName: el,
-            title: tag.title,
-            dir: path,
-            artist: tag.artist,
-            album: tag.album,
-            genre: tag.genre,
-            rate: 0,
-            trackNumber: tag.track
-          });
+          //Set duration to false to prevent reading the entire file.
+          musicmetadata(fs.createReadStream(path + el), { duration: false }, function (err, metadata) {
+            if(err) {
+              console.error(err);
+            }
+            console.log(metadata);
+            //Insert in DB
+            var artist = new Artist({
+              name: metadata.artist[0]
+            });
+            //TODO: Insert all genres (foreach)
+            var genre = new Genre({
+              name: metadata.genre[0]
+            });
+            var album = new Album({
+              name: metadata.album,
+              year: metadata.year,
+              artist: metadata.artist[0]
+            });
+            var song = new Song({
+              fileName: el,
+              title: metadata.title,
+              dir: path,
+              artist: metadata.artist[0],
+              album: metadata.album,
+              genre: metadata.genre,
+              rate: 0,
+              trackNumber: metadata.track.no
+            });
 
-          insert(artist, Artist, function() {
-            insert(genre, Genre, function() {
-              insert(album, Album, function() {
-                insert(song, Song, function() {
+            upsertArtist(artist, function() {
+              upsertGenre(genre, function() {
+                upsertAlbum(album, function() {
+                  upsertSong(song, function() {
+                  });
                 });
               });
             });
@@ -79,36 +149,6 @@ var scanDir = function (path, allowedExtension, callback) {
     });
   });
 };
-
-//Assuming db is empty
-function insert(el, model, cb) {
-  var db = mongoose.connection;
-  var name = el.name;
-  console.log(el);
-  if(el.name) {
-    el = el.toObject();
-    delete el._id;
-    model.findOneAndUpdate({name: name}, el, {upsert: true}, function(err, doc) {
-      if(err) {
-        console.log(err);
-      }
-      //console.log('RAW');
-      console.log(doc);
-      cb(doc);
-    });
-  } else {
-    //It's a song so just save it
-    console.log('Save Song');
-    el.save(function (err, data) {
-        if (err) {
-          console.log(err);
-        }
-      console.log(data);
-      cb(data);
-    });
-  }
-}
-
 
 function getExtension(path) {
   var fileName = path.split('.');

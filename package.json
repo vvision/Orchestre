@@ -1,6 +1,6 @@
 {
   "name": "Orchestre",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "author": "vvision <email>vvision@sfr.fr</email>",
   "description": "Orchestre is a streaming plateform which focus on playing flac files in the browser.",
   "license": "GPL-3.0",
@@ -25,7 +25,7 @@
     "async": "0.8.0",
     "npmlog": "0.0.6",
     "mongoose": "3.8.21",
-    "taglib": "0.8.0"
+    "musicmetadata": "1.0.0"
   },
   "devDependencies": {
     "mocha": "1.21.4",

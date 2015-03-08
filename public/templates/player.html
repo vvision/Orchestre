@@ -11,26 +11,46 @@
   </div>
 </div>
 
-<div class="time">
-  <span class="currentTime">00:00</span> / <span class="duration">00:00</span>
+<div class="player-controls">
+  <div class="player-progress">
+    <progress class="player-progress-played" value="0" max="100">
+      <span>0</span>% played
+    </progress>
+    <progress class="player-progress-buffer" value="0" max="100">
+      <span>0</span>% buffered
+    </progress>
+  </div>
+
+  <span class="player-controls-playback">
+    <button type="button" class="player-controls-play">
+      <span class="glyphicon glyphicon-play"></span>
+    </button>
+    <button type="button" class="player-controls-next">
+      <span class="glyphicon glyphicon-step-forward"></span>
+    </button>
+
+    <button type="button" class="player-controls-loop">
+      <span class="glyphicon glyphicon-repeat"></span>
+    </button>
+    <button type="button" class="player-controls-random">
+      <span class="glyphicon glyphicon-random"></span>
+    </button>
+
+    <span class="player-time">
+      <span class="player-duration">
+        00:00
+      </span>
+    </span>
+  </span>
+
+  <span class="player-controls-sound">
+    <button type="button" class="player-controls-mute">
+      <span class="glyphicon glyphicon-volume-down"></span>
+    </button>
+
+    <input class="player-volume" type="range" data-player="volume" value="80" max="100" min="0"></input>
+  </span>
 </div>
-
-<button type="button" class="playButton btn btn-primary btn-lg">
-  <span class="glyphicon glyphicon-play"></span>
-</button>
-<button type="button" class="nextButton btn btn-primary btn-lg">
-  <span class="glyphicon glyphicon-step-forward"></span>
-</button>
-
-<button type="button" class="loopButton btn btn-primary btn-lg">
-  <span class="glyphicon glyphicon-repeat"></span>
-</button>
-<button type="button" class="randButton btn btn-primary btn-lg">
-  <span class="glyphicon glyphicon-random"></span>
-</button>
-
-<div>Volume : <span class="volume"></span></div>
-<div id="slider"></div>
 
 <script>
 var unsupported;

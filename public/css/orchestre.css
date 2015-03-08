@@ -1,7 +1,7 @@
 body {
   background-color: #333;
   color:#fff;
-    
+
   /*
    * Required by fixed navbar.
    * Should be include after the core Bootstrap CSS.
@@ -72,3 +72,209 @@ input, textarea{
     display: block;
 }
 
+
+/*
+* Player.
+* Inspired by [Plyr](plyr.io)
+*/
+
+.player-controls button,.player-controls input+label {
+  display: inline-block;
+  vertical-align: middle;
+  margin: 0 2px;
+  padding: 5px 10px;
+  transition: background .3s ease;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.player-controls button svg,.player-controls input+label svg {
+  width: 18px;
+  height: 18px;
+  display: block;
+  fill: currentColor;
+  transition: fill .3s ease;
+}
+
+.player-controls input+label,.player-controls input.inverted:checked+label {
+  color: #565d64;
+}
+
+.player-controls button,.player-controls input.inverted+label,.player-controls input:checked+label {
+  color: #cbd0d3;
+}
+
+.player-controls button {
+  border: 0;
+  background: 0 0;
+  overflow: hidden;
+}
+
+.player-controls button:focus,.player-controls input:focus+label {
+  outline: #000 dotted thin;
+  outline-offset: 1px;
+  color: #fff;
+}
+
+.player-controls button:hover,.player-controls input+label:hover {
+  background: #3498db;
+  color: #fff;
+}
+
+.player-controls .icon-exit-fullscreen,.player-controls .icon-muted {
+  display: none;
+}
+
+.player-controls .player-time {
+  display: inline-block;
+  vertical-align: middle;
+  margin-left: 10px;
+  color: #cbd0d3;
+  font-weight: 600;
+  font-size: 14px;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+}
+
+/*Progress Bar*/
+
+.player-progress {
+  position: relative;
+  height: 10px;
+  background: none repeat scroll 0% 0% #6E777F;
+}
+
+.player-progress-buffer, .player-progress-played {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+    margin: 0px;
+    vertical-align: top;
+}
+
+.player-progress-buffer[value],.player-progress-played[value] {
+  -webkit-appearance: none;
+  border: none;
+  background: 0 0;
+}
+
+.player-progress-buffer[value]::-webkit-progress-bar,.player-progress-played[value]::-webkit-progress-bar {
+  background: 0 0;
+}
+
+.player-progress-buffer[value]::-webkit-progress-value,.player-progress-played[value]::-webkit-progress-value {
+  background: currentColor;
+}
+
+.player-progress-buffer[value]::-moz-progress-bar,.player-progress-played[value]::-moz-progress-bar {
+  background: currentColor;
+}
+
+.player-progress-played {
+  z-index: 2;
+}
+
+.player-progress-played[value] {
+  cursor: pointer;
+  color: #3498db;
+}
+
+.player-progress-buffer[value] {
+  color: #565d64;
+}
+
+.player-volume[type=range] {
+  display: inline-block;
+  vertical-align: middle;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  width: 100px;
+  margin: 0 10px 0 0;
+  padding: 0;
+  cursor: pointer;
+  background: 0 0;
+}
+
+.player-volume[type=range]::-webkit-slider-runnable-track {
+  height: 6px;
+  background: #565d64;
+  border: 0;
+  border-radius: 3px;
+}
+
+.player-volume[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  margin-top: -3px;
+  height: 12px;
+  width: 12px;
+  background: #cbd0d3;
+  border: 0;
+  border-radius: 6px;
+  transition: background .3s ease;
+  cursor: ew-resize;
+}
+
+.player-volume[type=range]::-moz-range-track {
+  height: 6px;
+  background: #565d64;
+  border: 0;
+  border-radius: 3px;
+}
+
+.player-volume[type=range]::-moz-range-thumb {
+  height: 12px;
+  width: 12px;
+  background: #cbd0d3;
+  border: 0;
+  border-radius: 6px;
+  transition: background .3s ease;
+  cursor: ew-resize;
+}
+
+.player-volume[type=range]::-ms-track {
+  height: 6px;
+  background: 0 0;
+  border-color: transparent;
+  border-width: 3px 0;
+  color: transparent;
+}
+
+.player-volume[type=range]::-ms-fill-lower,.player-volume[type=range]::-ms-fill-upper {
+  height: 6px;
+  background: #565d64;
+  border: 0;
+  border-radius: 3px;
+}
+
+.player-volume[type=range]::-ms-thumb {
+  height: 12px;
+  width: 12px;
+  background: #cbd0d3;
+  border: 0;
+  border-radius: 6px;
+  transition: background .3s ease;
+  cursor: ew-resize;
+}
+
+.player-volume[type=range]:focus {
+  outline: 0;
+}
+
+.player-volume[type=range]:focus::-webkit-slider-thumb {
+  background: #3498db;
+}
+
+.player-volume[type=range]:focus::-moz-range-thumb {
+  background: #3498db;
+}
+
+.player-volume[type=range]:focus::-ms-thumb {
+  background: #3498db;
+}
+
+/*Controls*/
+.player-controls-playback > button.active > span {
+  color: #FF2D00;
+}

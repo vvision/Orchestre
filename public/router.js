@@ -15,7 +15,6 @@ requirejs.config({
     'i18n': 'i18n',
     'bootstrap': 'js/lib/bootstrap',
     'backbone.paginator': 'js/lib/backbone.paginator',
-    'noUiSlider': 'js/lib/jquery.nouislider-7.0.10',
     'sha512': 'js/lib/sha512'
   },
   shim: {
@@ -37,9 +36,6 @@ requirejs.config({
     },
     'backbone.paginator': {
       deps: ['backbone']
-    },
-    'noUiSlider': {
-      deps: ['jquery']
     }
   }
 });

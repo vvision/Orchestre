@@ -10,7 +10,7 @@ var songSchema = mongoose.Schema({
   trackNumber: Number,
   artist: String,
   album: String,
-  genre: String
+  genre: [String]
 });
 
 var Song = mongoose.model('Song', songSchema);
