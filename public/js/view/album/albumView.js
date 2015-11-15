@@ -1,18 +1,20 @@
 define([
   'jquery',
   'backbone',
-  'hogan',
+  'handlebars',
   'js/models/Album',
   'js/models/Song',
-  'text!templates/album/album.html',
-  'text!templates/song/thumb.html'
-  ], function($, Backbone, Hogan, Album, Song, AlbumTemplate, SongTemplate) {
+  '/js/view/song/songView.js',
+  'text!templates/album/album.html'
+  ], function($, Backbone, Handlebars, Album, Song, SongView, AlbumTemplate) {
 
   return Backbone.View.extend({
+    template: Handlebars.compile(AlbumTemplate),
+
     initialize: function(options) {
       this.albumId = options.albumId;
-      this.playlist = options.playlist;
-      this.nowPlaying = options.nowPlaying;
+      this.orchestre = options.orchestre;
+      this.playlist = options.orchestre.get('playlist');
       console.log(this.albumId);
 
       this.album = new Album.Model({id: options.albumId});
@@ -26,8 +28,6 @@ define([
     },
 
     events: {
-      'click .play': 'playSong',
-      'click .add': 'addToPlaylist',
       'click .playAlbum': 'addAlbumToPlaylist'
     },
 
@@ -35,63 +35,20 @@ define([
       this.playlist.add(this.songs.models);
     },
 
-    addToPlaylist: function(e) {
-      var self = this;
-      var className = e.currentTarget.className.split(' ');
-      var songId = className[1].trim();
-      console.log(songId);
-
-      var song = new Song.Model({id: songId});
-      song.fetch({
-        success: function() {
-          self.playlist.add(song);
-          console.log(self.playlist);
-        },
-        error: function(err) {
-          console.log(err);
-        }
-      });
-    },
-
-    playSong: function(e) {
-      var self = this;
-      var className = e.currentTarget.className.split(' ');
-      var songId = className[1].trim();
-      console.log(songId);
-
-      var song = new Song.Model({id: songId});
-      song.fetch({
-        success: function() {
-          self.nowPlaying.reset();
-          self.nowPlaying.add(song);
-          console.log(self.nowPlaying);
-        },
-        error: function(err) {
-          console.log(err);
-        }
-      });
-    },
-
     renderAlbumName: function() {
       $('.albumName').html(this.album.get('name'));
     },
 
     renderSongs: function() {
+      var self = this;
       $('.songList').empty();
-      this.songs.each(function(doc) {
-        $('.songList').append(Hogan.compile(SongTemplate).render({
-          songId: doc.get('_id'),
-          trackNumber: doc.get('trackNumber'),
-          songTitle: doc.get('title'),
-          artistName: doc.get('artist'),
-          albumTitle: doc.get('album'),
-          rated: doc.get('rate')
-        }));
+      this.songs.each(function(song) {
+        $('.songList').append(new SongView({model: song, orchestre: self.orchestre}).render().el);
       });
     },
 
     render: function() {
-      this.$el.html(Hogan.compile(AlbumTemplate).render({
+      this.$el.html(this.template({
         name: this.album.get('name')
       }));
       return this;

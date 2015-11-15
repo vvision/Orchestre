@@ -12,16 +12,19 @@
 
     <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
 
-    <link rel="stylesheet" href="/css/bootstrap.css"></link>
-    <link rel="stylesheet" href="/css/bootstrap-theme.css"></link>
-    <link rel="stylesheet" href="/css/jquery.nouislider.7.0.10.css" />
+    <link rel="stylesheet" href="/css/bootstrap.min.css"></link>
+    <link rel="stylesheet" href="/css/bootstrap-theme.min.css"></link>
     <link rel="stylesheet" href="/css/orchestre.css"/>
+    <link rel="stylesheet" href="/css/jquery-ui.min.css"/>
+    <link rel="stylesheet" href="/css/jquery-ui.structure.min.css"/>
+    <link rel="stylesheet" href="/css/jquery-ui.theme.min.css"/>
 
-    <script src="/js/lib/aurora-0.4.4.js"></script>
-    <script src="/js/lib/flac-0.2.1.js"></script>
-    <script src="/js/lib/mp3-0.1.0.js"></script>
+    <script src="/js/lib/aurora.js"></script>
+    <script src="/js/lib/flac.js"></script>
+    <script src="/js/lib/mp3.js"></script>
 
-    <script data-main="/router" src="/js/lib/require-2.1.15.js"></script>
+    <script data-main="/router" src="/js/lib/require.js"></script>
+    <script src="/config.js"></script>
   </head>
   <body>
     <header></header>
@@ -36,7 +39,10 @@
           <div class="col-md-3">
             <div class ="playData">
               <div id="player"></div>
-              <div id="playlist"></div>
+              <div id="playlistControls"></div>
+              <div id="playlistContent">
+                <ul id="sortable-queue" class="queue-data">
+              </div>
             </div>
           </div>
           <div class="col-md-9">

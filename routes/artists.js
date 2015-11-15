@@ -1,22 +1,29 @@
 var express = require('express');
 var router = express.Router();
+var request = require('request');
+var fs = require('fs');
+var async = require('async');
+var auth = require('./utils/checkAuth');
 var mongoose = require('mongoose');
 var Artist = mongoose.model('Artist');
 var Album = mongoose.model('Album');
 
+var conf = require('../config');
+
 router.get('/', artists);
+router.get('/importDesc', auth.ensureAuthenticated, auth.ensureAdmin, importWikipediaDesc);
+router.get('/importThumb', auth.ensureAuthenticated, auth.ensureAdmin, importWikipediaThumb);
 router.get('/:id', aboutArtist);
 router.get('/:id/albums', albumsFromArtist);
 
 module.exports = router;
 
 //TODO: Pagination
-function artists(req, res, next) {
-  var start = req.query.start;
-  var limit = req.query.limit;
-
+function artists(req, res) {
   Artist.find(function (err, docs) {
-    if(err) console.error(err);
+    if(err) {
+      console.error(err);
+    }
     console.log(docs);
     res.send(docs);
   });
@@ -55,6 +62,142 @@ function albumsFromArtist(req, res, next) {
         return next(error);
       }
       res.send(albums);
+    });
+
+  });
+}
+
+function importWikipediaDesc(req, res) {
+  var options = {
+    uri: 'http://en.wikipedia.org/w/api.php',
+    qs: {
+      action: 'query',
+      prop: 'extracts',
+      rawcontinue: '',
+      format: 'json',
+      indexpageids: 1,
+      redirects: 1,
+      exintro: 1
+    },
+    proxy: conf.proxy
+  };
+
+  //Would be great to it in multiple batch (not just one)
+  Artist.find(function (err, artists) {
+    if(err) {
+      console.error(err);
+    }
+    console.log(artists);
+
+    async.eachSeries(artists, function (artist, cb) {
+      options.qs.titles = artist.name;
+      request(options, function (error, response, body) {
+        if(error) {
+          console.error(error);
+        }
+        //console.log(body);
+        var data = JSON.parse(body);
+        if(data.query) {
+          var id = data.query.pageids[0];
+          var description = data.query.pages[id].extract;
+          if(description) {
+            console.log(description);
+            //Update artist in db
+            Artist.findOneAndUpdate(
+              {name: artist.name},
+              {desc: description},
+              {upsert: true},
+              function(err, doc) {
+                if(err) {
+                  console.log(err);
+                }
+                console.log(doc);
+                cb();
+              });
+          } else {
+            cb();
+          }
+        }
+      });
+    }, function (err) {
+      if(err) {
+        console.error(err);
+      }
+      res.send('done');
+    });
+
+  });
+}
+
+
+function importWikipediaThumb(req, res) {
+  var options = {
+    uri: 'http://en.wikipedia.org/w/api.php',
+    qs: {
+      action: 'query',
+      prop: 'pageimages',
+      format: 'json',
+      indexpageids: 1,
+      piprop: 'thumbnail',
+      pithumbsize: 250,
+      pilimit: 1,
+      redirects: 1,
+      continue: ''
+    },
+    proxy: conf.proxy
+  };
+
+  //Would be great to it in multiple batch (not just one)
+  Artist.find(function (err, artists) {
+    if(err) {
+      console.error(err);
+    }
+    console.log(artists);
+
+    async.eachSeries(artists, function (artist, cb) {
+      options.qs.titles = artist.name;
+      request(options, function (error, response, body) {
+        if(error) {
+          console.error(error);
+        }
+        //console.log(body);
+        var data = JSON.parse(body);
+        if(data.query) {
+          var id = data.query.pageids[0];
+          var thumbnail = data.query.pages[id].thumbnail;
+          if(thumbnail) {
+            console.log(thumbnail);
+            //Save picture
+            request(thumbnail.source, {proxy: conf.proxy})
+              .on('error', function(err) {
+                console.log(err);
+                cb();
+              })
+              .on('end', function() {
+                //Update artist in db
+                Artist.findOneAndUpdate(
+                  {name: artist.name},
+                  {img: true},
+                  {upsert: true},
+                  function(err, doc) {
+                    if(err) {
+                      console.log(err);
+                    }
+                    console.log(doc);
+                    cb();
+                  });
+              })
+              .pipe(fs.createWriteStream('./public/img/artists/' + artist._id + '.jpg'));
+          } else {
+            cb();
+          }
+        }
+      });
+    }, function (err) {
+      if(err) {
+        console.error(err);
+      }
+      res.send('done');
     });
 
   });

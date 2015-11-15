@@ -19,7 +19,7 @@ function paginate(currentPage, totalElements, type, query, field, size, protocol
   //Pagination
   var hostname = conf.domain !== '' ? conf.domain : conf.host + ':' + conf.port;
   var uri = protocol + '://' + hostname + '/search/' + type +'?';
-  var lastPage =  Math.ceil(totalElements / size);
+  var lastPage = Math.ceil(totalElements / size);
 
   //Create query parameters
   var queryParams = {};
@@ -52,25 +52,22 @@ function paginate(currentPage, totalElements, type, query, field, size, protocol
 }
 
 function searchSong(req, res) {
-  var query = req.param('q', '');
-  var field = req.param('field', 'title');
-  var currentPage = req.param('page', 1);
-  var size = req.param('size', 50);
+  var query = req.query.q || '';
+  var field = req.query.field || 'title';
+  var currentPage = req.query.page || 1;
+  var size = req.query.size || 50;
   var skipFrom = (currentPage * size) - size;
-  var songs = [];
   console.log(req.query);
 
-  //Case insensitive regex with query
-  var reg = new RegExp('^' + query, 'i');
   var search = {};
-  search[field] = reg;
+  search[field] = { '$regex': query, '$options': 'i' };
   console.log(search);
   Song.count(search, function(err, nSongs) {
     if(err) {
       console.log(err);
     }
 
-    var links = paginate(currentPage, nSongs, 'songs', query, field, size, req.protocol, function(links) {
+    paginate(currentPage, nSongs, 'songs', query, field, size, req.protocol, function(links) {
       console.log(links);
       res.links(links);
 
@@ -87,25 +84,23 @@ function searchSong(req, res) {
 }
 
 function searchArtist(req, res) {
-  var query = req.param('q', '');
-  var currentPage = req.param('page', 1);
-  var size = req.param('size', 50);
+  var query = req.query.q || '';
+  var currentPage = req.query.page || 1;
+  var size = req.query.size || 50;
   var skipFrom = (currentPage * size) - size;
   console.log(req.query);
 
-  //Case insensitive regex with query
-  var reg = new RegExp('^' + query, 'i');
-  Artist.count({name: reg}, function(err, nElements) {
+  Artist.count({name: { '$regex': query, '$options': 'i' }}, function(err, nElements) {
     if(err) {
       console.log(err);
     }
 
-    var links = paginate(currentPage, nElements, 'artists', query, '', size, req.protocol, function(links) {
+    paginate(currentPage, nElements, 'artists', query, '', size, req.protocol, function(links) {
       console.log(links);
       res.links(links);
 
       //Find artists matching the query
-      Artist.find({name: reg}, {'__v': 0}).sort('name').skip(skipFrom).limit(size).exec(function (err, docs) {
+      Artist.find({name: { '$regex': query, '$options': 'i' }}, {'__v': 0}).sort('name').skip(skipFrom).limit(size).exec(function (err, docs) {
         console.log(docs);
         if(err) {
           console.error(err);
@@ -117,25 +112,23 @@ function searchArtist(req, res) {
 }
 
 function searchAlbum(req, res) {
-  var query = req.param('q', '');
-  var currentPage = req.param('page', 1);
-  var size = req.param('size', 50);
+  var query = req.query.q || '';
+  var currentPage = req.query.page || 1;
+  var size = req.query.size || 50;
   var skipFrom = (currentPage * size) - size;
   console.log(req.query);
 
-  //Case insensitive regex with query
-  var reg = new RegExp('^' + query, 'i');
-  Album.count({name: reg}, function(err, nElements) {
+  Album.count({name: { '$regex': query, '$options': 'i' }}, function(err, nElements) {
     if(err) {
       console.log(err);
     }
 
-    var links = paginate(currentPage, nElements, 'albums', query, '', size, req.protocol, function(links) {
+    paginate(currentPage, nElements, 'albums', query, '', size, req.protocol, function(links) {
       console.log(links);
       res.links(links);
 
       //Find albums matching the query
-      Album.find({name: reg}, {'__v': 0}).sort('name').skip(skipFrom).limit(size).exec(function (err, docs) {
+      Album.find({name: { '$regex': query, '$options': 'i' }}, {'__v': 0}).sort('name').skip(skipFrom).limit(size).exec(function (err, docs) {
         console.log(docs);
         if(err) {
           console.error(err);
@@ -147,25 +140,23 @@ function searchAlbum(req, res) {
 }
 
 function searchGenre(req, res) {
-  var query = req.param('q', '');
-  var currentPage = req.param('page', 1);
-  var size = req.param('size', 50);
+  var query = req.query.q || '';
+  var currentPage = req.query.page || 1;
+  var size = req.query.size || 50;
   var skipFrom = (currentPage * size) - size;
   console.log(req.query);
 
-  //Case insensitive regex with query
-  var reg = new RegExp('^' + query, 'i');
-  Genre.count({name: reg}, function(err, nElements) {
+  Genre.count({name: { '$regex': query, '$options': 'i' }}, function(err, nElements) {
     if(err) {
       console.log(err);
     }
 
-    var links = paginate(currentPage, nElements, 'genres', query, '', size, req.protocol, function(links) {
+    paginate(currentPage, nElements, 'genres', query, '', size, req.protocol, function(links) {
       console.log(links);
       res.links(links);
 
       //Find genres matching the query
-      Genre.find({name: reg}, {'__v': 0}).sort('name').skip(skipFrom).limit(size).exec(function (err, docs) {
+      Genre.find({name: { '$regex': query, '$options': 'i' }}, {'__v': 0}).sort('name').skip(skipFrom).limit(size).exec(function (err, docs) {
         console.log(docs);
         if(err) {
           console.error(err);

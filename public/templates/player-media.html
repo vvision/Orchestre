@@ -1,0 +1,16 @@
+<div class="media">
+  <div class="media-left media-middle">
+  {{#if albumId}}
+    <img class="media-object player-data-cover" src="/img/albums/{{albumId}}.jpg" alt="{{album}}">
+  {{else}}
+    <img class="media-object player-data-cover" src="/css/note.jpg" alt="Default">
+  {{/if}}
+  </div>
+  <div class="media-body">
+    <h4 class="media-heading nowPlaying title">{{title}}</h4>
+    <div class="nowPlaying artist">{{artist}}</div>
+    <div class="nowPlaying album">{{album}}</div>
+    <div class="nowPlaying genre">{{genre}}</div>
+    <div class="nowPlaying rate">{{rate}}</div>
+  </div>
+</div>

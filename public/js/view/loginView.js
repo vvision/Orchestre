@@ -1,14 +1,15 @@
 define([
   'jquery',
   'backbone',
-  'hogan',
+  'handlebars',
   'bootstrap',
   'sha512',
   'text!templates/login.html',
   'text!templates/alert.html'
-  ], function($, Backbone, Hogan, Bootstrap, SHA, LoginTemplate, AlertTemplate) {
+], function($, Backbone, Handlebars, Bootstrap, SHA, LoginTemplate, AlertTemplate) {
 
   return Backbone.View.extend({
+    template: Handlebars.compile(LoginTemplate),
 
     initialize: function(options) {
       this.user = options.user;
@@ -20,10 +21,10 @@ define([
     },
 
     displayAlert: function(alertType, strongText, message) {
-      $('.msg').empty().append(Hogan.compile(AlertTemplate).render({
+      $('.msg').empty().append(Handlebars.compile(AlertTemplate)({
         alertType: alertType,
         strongText: strongText,
-        message: message,
+        message: message
       }));
     },
 
@@ -37,7 +38,7 @@ define([
         url: '/auth/login',
         type: 'POST',
         data: {
-          login: $('.login').val(),
+          username: $('.login').val(),
           password: hash
         },
         success: function(user) {
@@ -55,7 +56,7 @@ define([
     },
 
     render: function() {
-      this.$el.html(Hogan.compile(LoginTemplate).render({
+      this.$el.html(this.template({
         login: 'Login',
         password: 'Password',
         title: 'Authentication',

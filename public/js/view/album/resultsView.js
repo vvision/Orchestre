@@ -2,20 +2,18 @@ define([
   'jquery',
   'backbone',
   'backbone.paginator',
-  'hogan',
+  'handlebars',
   'text!templates/results.html',
   'text!templates/album/thumb.html'
-  ], function($, Backbone, Paginator, Hogan, ResultsTemplate, AlbumThumbTemplate) {
+  ], function($, Backbone, Paginator, Handlebars, ResultsTemplate, AlbumThumbTemplate) {
 
   return Backbone.View.extend({
+    template: Handlebars.compile(ResultsTemplate),
+
     initialize: function (options) {
       this.filter = options.filter;
       console.log(options);
       var uri = 'search/albums';
-
-      if(this.filter !== '') {
-        uri += '?q=' + this.filter;
-      }
 
       //Setup pageable collection
       var Doc = Backbone.Model.extend({});
@@ -29,6 +27,7 @@ define([
           pageSize: 12
         },
         queryParams: {
+          q: this.filter,
           currentPage: 'page',
           pageSize: 'size',
           order: null,
@@ -51,7 +50,7 @@ define([
         self.docs.each(function(doc) {
           var dataEl = doc.attributes;
           console.log(dataEl);
-          $('.resultsData').append(Hogan.compile(AlbumThumbTemplate).render({
+          $('.resultsData').append(Handlebars.compile(AlbumThumbTemplate)({
             albumId: dataEl._id,
             albumName: dataEl.name,
           }));
@@ -87,7 +86,7 @@ define([
     },
 
     render: function() {
-      this.$el.html(Hogan.compile(ResultsTemplate).render({}));
+      this.$el.html(this.template());
       return this;
     }
   });

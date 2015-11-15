@@ -2,73 +2,41 @@ define([
   'jquery',
   'backbone',
   'backbone.paginator',
-  'hogan',
+  'handlebars',
+  '/js/view/song/songView.js',
   'text!templates/results.html',
-  'text!templates/song/thumb.html'
-  ], function($, Backbone, Paginator, Hogan, ResultsTemplate, SongTemplate) {
+  'js/models/Song'
+  ], function($, Backbone, Paginator, Handlebars, SongView, ResultsTemplate, Song) {
 
   return Backbone.View.extend({
+    template: Handlebars.compile(ResultsTemplate),
+
     initialize: function (options) {
+      this.orchestre = options.orchestre;
       this.type = options.type;
       this.filter = options.filter;
       this.field = options.field;
+      this.links;
       console.log(options);
-      var uri = 'search/songs';
-      var queryParams = {};
-
-      if(this.filter !== '') {
-        queryParams.q = this.filter;
-      }
-      if(this.field !== '' && this.field !== 'title') {
-        queryParams.field = this.field;
-      }
-      if(this.filter !== '' || this.field !== '') {
-        uri += '?' + $.param(queryParams);
-      }
-
-      //Setup pageable collection
-      var Doc = Backbone.Model.extend({});
-
-      var Docs = Backbone.PageableCollection.extend({
-        model: Doc,
-        url: uri,
-        mode: 'infinite',
-        state: {
-          firstPage: 1,
-          pageSize: 12
-        },
-        queryParams: {
-          currentPage: 'page',
-          pageSize: 'size',
-          order: null,
-          totalPages: null,
-          totalRecords: null,
-          sortKey: null,
-          directions: null
-        }
-      });
-
-      this.docs = new Docs();
-
-      //Initialize data
-      this.docs.getFirstPage();
-      console.log(this.docs);
 
       var self = this;
-      this.docs.on('reset', function() {
+      this.songs = new Song.Collection();
+      this.songs.search({
+        q: this.filter,
+        field: this.field || 'title',
+        size: 12,
+        page: 1
+      }, function(collection, response, options) {
+        self.links = self.parseLinks(options.xhr);
+        console.log(options.xhr.getResponseHeader('Link'));
+      });
+
+      this.songs.on('reset', function() {
         $('.resultsData').empty();
         $('.resultsData').append('<table class="table songList"></table>');
-        self.docs.each(function(doc) {
-          var dataEl = doc.attributes;
-          console.log(dataEl);
-          $('.songList').append(Hogan.compile(SongTemplate).render({
-            songId: dataEl._id,
-            trackNumber: dataEl.trackNumber,
-            songTitle: dataEl.title,
-            artistName: dataEl.artist,
-            albumTitle: dataEl.album,
-            rated: dataEl.rate
-          }));
+        self.songs.each(function(song) {
+          console.log(song);
+          $('.songList').append(new SongView({model: song, orchestre: self.orchestre}).render().el);
         });
       });
     },
@@ -82,26 +50,73 @@ define([
       'click .rateDec': 'rateDec'
     },
 
+    parseLinks: function(xhr) {
+      var PARAM_TRIM_RE = /[\s'"]/g;
+      var URL_TRIM_RE = /[<>\s'"]/g;
+      var links = {};
+
+      var linkHeader = xhr.getResponseHeader('Link');
+      if(linkHeader) {
+        var relations = ['first', 'prev', 'next', 'last'];
+        linkHeader.split(',').forEach(function(linkValue) {
+          var linkParts = linkValue.split(';');
+          var url = linkParts[0].replace(URL_TRIM_RE, '');
+          var params = linkParts.slice(1);
+          params.forEach(function (param) {
+            var paramParts = param.split('=');
+            var key = paramParts[0].replace(PARAM_TRIM_RE, '');
+            var value = paramParts[1].replace(PARAM_TRIM_RE, '');
+            if (key === 'rel' && relations.indexOf(value) !== -1) {
+              links[value] = url;
+            }
+          });
+        });
+      }
+
+      return links;
+    },
+
     firstPage: function() {
-      this.docs.getFirstPage();
+      var self = this;
+      if(this.links.first) {
+        this.songs.url = this.links.first;
+        this.songs.search({}, function(collection, response, options) {
+          self.links = self.parseLinks(options.xhr);
+        });
+      }
     },
 
     lastPage: function() {
-      this.docs.getLastPage();
+      var self = this;
+      if(this.links.last) {
+        this.songs.url = this.links.last;
+        this.songs.search({}, function(collection, response, options) {
+          self.links = self.parseLinks(options.xhr);
+        });
+      }
     },
 
     prevPage: function() {
-      if(this.docs.hasPreviousPage()) {
-        this.docs.getPreviousPage();
+      var self = this;
+      if(this.links.prev) {
+        this.songs.url = this.links.prev;
+        this.songs.search({}, function(collection, response, options) {
+          self.links = self.parseLinks(options.xhr);
+        });
       }
     },
 
     nextPage: function() {
-      if(this.docs.hasNextPage()) {
-        this.docs.getNextPage();
+      var self = this;
+      if(this.links.next) {
+        this.songs.url = this.links.next;
+        this.songs.search({}, function(collection, response, options) {
+          self.links = self.parseLinks(options.xhr);
+        });
       }
     },
 
+    //Deprecated
     rateInc: function(e) {
       console.log('Inc');
       var className = e.target.parentNode.className.split(' ');
@@ -124,6 +139,7 @@ define([
       });
     },
 
+    //Deprecated
     rateDec: function(e) {
       console.log('Dec');
       var className = e.target.parentNode.className.split(' ');
@@ -147,7 +163,7 @@ define([
     },
 
     render: function() {
-      this.$el.html(Hogan.compile(ResultsTemplate).render({}));
+      this.$el.html(this.template());
       return this;
     }
   });

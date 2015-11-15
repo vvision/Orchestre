@@ -1,7 +1,7 @@
 define([
   'jquery',
   'backbone'
-  ], function($, Backbone) {
+], function($, Backbone) {
 
   var Artist = Backbone.Model.extend({
     urlRoot: '/artists'

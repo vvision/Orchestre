@@ -1,14 +1,22 @@
-<div class="songInPlaylist {{songId}}">
+<li class="queue-song {{songId}} list-group-item" draggable="true">
   <div class="media">
-    <div class="media-left media-middle">
-      <button type="button" class="{{songId}} remove btn btn-info btn-sm">
+    <div class="media-left">
+      <img class="media-object" width="32" height="32" src="/img/albums/{{albumId}}.jpg"/>
+    </div>
+
+    <div class="media-body">
+      <div class="{{songId}} song-title">{{songTitle}}</div>
+      <div class="{{songId}} song-artist">{{artistName}}</div>
+    </div>
+
+    <div class="media-right">
+      <button type="button" class="{{songId}} queue-song-favorite">
+        <span class="glyphicon glyphicon-heart"></span>
+      </button>
+
+      <button type="button" class="{{songId}} queue-song-remove">
         <span class="glyphicon glyphicon-remove"></span>
       </button>
     </div>
-    <div class="media-body">
-      <h4 class="media-heading {{songId}} title">{{songTitle}}</h4>
-      <div class="{{songId}} artist">By {{artistName}}</div>
-      <div class="{{songId}} album"> On {{albumTitle}}</div>
-    </div>
   </div>
-</div>
+</li>

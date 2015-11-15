@@ -1,21 +1,49 @@
-<tr class="song {{songId}}">
+<span class="song {{songId}}">
   <td>
-    <button type="button" class="play {{songId}} btn btn-info btn-sm">
-      <span class="glyphicon glyphicon-play"></span>
-    </button>
+
+    <span class="dropdown">
+      <button class="btn btn-info btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="true">
+        <span class="glyphicon glyphicon-play"></span>
+        <span class="caret"></span>
+      </button>
+
+      <ul class="dropdown-menu" role="menu">
+        <li>
+          <span class="song-controls-listen-now {{songId}}">Listen</span>
+        </li>
+        <li class="divider"></li>
+        <li>
+          <span class="song-controls-listen-next {{songId}}">Play next</span>
+        </li>
+        <li>
+          <span class="song-controls-listen-end {{songId}}">Play at end</span>
+        </li>
+      </ul>
+    </span>
   </td>
-  <td>
-    <button type="button" class="add {{songId}} btn btn-info btn-sm">
-      <span class="glyphicon glyphicon-plus"></span>
-    </button>
-  </td>
+
   <td class="track">{{trackNumber}}</td>
   <td class="title">{{songTitle}}</td>
   <td class="artist {{artistId}}">{{artistName}}</td>
   <td class="album {{albumId}}">{{albumTitle}}</td>
+  <td class="type">
+    <span class="label {{type}}">{{type}}</span>
+  </td>
+  <td class="download">
+    <a
+     class="song-download"
+     href="/songs/{{songId}}/download/{{songTitle}}.{{type}}"
+     target=""
+     title="Download the song."
+    >
+      <span class="glyphicon glyphicon-download"></span>
+    </a>
+  </td>
+  <!-- DEPRECATED><-->
   <td class="rateInfo {{songId}}">
     <button type="button" class="rateDec btn btn-info btn-sm">-</button>
     <span class="rate {{songId}} badge">{{rated}}</span>
     <button type="button" class="rateInc btn btn-info btn-sm">+</button>
   </td>
-</tr>
+  <!-- DEPRECATED><-->
+</span>

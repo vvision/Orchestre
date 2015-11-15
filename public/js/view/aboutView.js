@@ -1,11 +1,13 @@
 define([
   'jquery',
   'backbone',
-  'hogan',
+  'handlebars',
   'text!templates/about.html'
-  ], function($, Backbone, Hogan, AboutTemplate) {
+], function($, Backbone, Handlebars, AboutTemplate) {
 
   return Backbone.View.extend({
+    template: Handlebars.compile(AboutTemplate),
+
     initialize: function() {
 
     },
@@ -13,7 +15,7 @@ define([
     events: {},
 
     render: function() {
-      this.$el.html(Hogan.compile(AboutTemplate).render({
+      this.$el.html(this.template({
         text: 'Lorem Ipsus',
         title: 'About'
       }));

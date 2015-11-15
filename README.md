@@ -8,8 +8,11 @@ Orchestre is a streaming plateform which focus on being able to play flac files 
 
 * Clone it.
 * Change directory: cd Orchestre.
+* Install Gulp globally : `npm install --global gulp`
 * Install dependencies: `npm install`.
-* Start the server: `npm start` or `node server.js`.
+* Configure Orchestre: `cp config.json.example config.json`.
+* Edit configuration.
+* Start the server: `npm start` or `node orchestre.js`.
 * You can now sign in with user `test` and password `test`.
 
 I recommend using a tool like *forever* to run the server.
@@ -19,14 +22,27 @@ I recommend using a tool like *forever* to run the server.
 
 * Node.Js
 * MongoDB
+* (Gulp)
 
 
 # Configuration
 
-Some parameters are available in *config.json*. To change the password, use `node hashPass.js myNewPassword` to generate the hash and modified it in the configuration file.
+Basic configuration is available in *config.json.example*.
 
 Do not forget to change `musicPath`.
 
+To add first admin, use `node createAdmin.js` which will populate db with your inputs.
+
+## Flac files and Seeking
+
+Flac.js uses seektables to perform a seek.
+As this is not an accurate way of seeking, it will jump to the closer seek point rather than calculating the right point to continue playing the song.
+
+Indeed, if the file has a seektable which seek points every seconds, seeking will work well.
+So if seeking fail, you should add a proper seektable with metaflac:
+``
+metaflac --add-seekpoint=1s *.flac
+``
 
 # License
 

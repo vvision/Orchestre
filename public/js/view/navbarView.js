@@ -1,15 +1,17 @@
 define([
   'jquery',
   'backbone',
-  'hogan',
+  'handlebars',
   'text!templates/header/navbar.html',
   'text!templates/header/loginMenu.html',
   'text!templates/header/userMenu.html',
   'text!templates/header/adminMenu.html',
   'text!templates/header/authMenu.html'
-  ], function($, Backbone, Hogan, NavbarTemplate, LoginMenuTemplate, UserMenuTemplate, AdminMenuTemplate, AuthMenuTemplate) {
+], function($, Backbone, Handlebars, NavbarTemplate, LoginMenuTemplate, UserMenuTemplate, AdminMenuTemplate, AuthMenuTemplate) {
 
   return Backbone.View.extend({
+    template: Handlebars.compile(NavbarTemplate),
+
     initialize: function(options) {
       this.user = options.user;
       this.user.on('change', this.renderUserMenu, this);
@@ -34,28 +36,28 @@ define([
     renderUserMenu: function() {
       console.log(this.user);
       if(this.user.get('role') && this.user.get('role') != null) {
-        $('.authMenu').html(Hogan.compile(AuthMenuTemplate).render({}));
+        $('.authMenu').html(Handlebars.compile(AuthMenuTemplate)());
 
         if(this.user.get('role') === 'admin') {
-          $('.userMenu').html(Hogan.compile(AdminMenuTemplate).render({
+          $('.userMenu').html(Handlebars.compile(AdminMenuTemplate)({
             username: this.user.get('username')
           }));
         } else {
-          $('.userMenu').html(Hogan.compile(UserMenuTemplate).render({
+          $('.userMenu').html(Handlebars.compile(UserMenuTemplate)({
             username: this.user.get('username')
           }));
         }
       } else {
         $('.authMenu').empty();
-        $('.userMenu').html(Hogan.compile(LoginMenuTemplate).render({}));
+        $('.userMenu').html(Handlebars.compile(LoginMenuTemplate)());
       }
     },
 
     render: function() {
-      this.$el.html(Hogan.compile(NavbarTemplate).render());
+      this.$el.html(this.template());
 
       $('.authMenu', this.$el).empty();
-      $('.userMenu', this.$el).html(Hogan.compile(LoginMenuTemplate).render({}));
+      $('.userMenu', this.$el).html(Handlebars.compile(LoginMenuTemplate)());
       return this;
     }
   });

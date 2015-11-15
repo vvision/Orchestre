@@ -1,15 +1,16 @@
 define([
   'jquery',
   'backbone',
-  'hogan',
+  'handlebars',
   'bootstrap',
   'sha512',
   'text!templates/user/newUserForm.html',
   'text!templates/alert.html',
   'js/models/User'
-  ], function($, Backbone, Hogan, Bootstrap, SHA, NewUserTemplate, AlertTemplate, User) {
+  ], function($, Backbone, Handlebars, Bootstrap, SHA, NewUserTemplate, AlertTemplate, User) {
 
   return Backbone.View.extend({
+    template: Handlebars.compile(NewUserTemplate),
 
     initialize: function() {
       this.user = new User.Model();
@@ -21,7 +22,7 @@ define([
     },
 
     displayAlert: function(alertType, strongText, message) {
-      $('.msg').empty().append(Hogan.compile(AlertTemplate).render({
+      $('.msg').empty().append(Handlebars.compile(AlertTemplate)({
         alertType: alertType,
         strongText: strongText,
         message: message,
@@ -36,7 +37,9 @@ define([
 
       this.user.set({
         username: $('.username').val(),
-        password: hash
+        password: hash,
+        mail: $('.mail').val(),
+        role: 'user'//For now, just possible to create basic user.
       });
 
       this.user.save({}, {
@@ -52,9 +55,10 @@ define([
     },
 
     render: function() {
-      this.$el.html(Hogan.compile(NewUserTemplate).render({
+      this.$el.html(this.template({
         username: 'Username',
         password: 'Password',
+        mail: 'Mail',
         title: 'New User',
         submit: 'Create'
       }));

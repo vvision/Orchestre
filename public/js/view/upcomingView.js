@@ -1,11 +1,13 @@
 define([
   'jquery',
   'backbone',
-  'hogan',
+  'handlebars',
   'text!templates/upcoming.html'
-  ], function($, Backbone, Hogan, UpcomingTemplate) {
+], function($, Backbone, Handlebars, UpcomingTemplate) {
 
   return Backbone.View.extend({
+    template: Handlebars.compile(UpcomingTemplate),
+
     initialize: function() {
 
     },
@@ -15,7 +17,7 @@ define([
     },
 
     render: function() {
-      this.$el.html(Hogan.compile(UpcomingTemplate).render({}));
+      this.$el.html(this.template());
       return this;
     }
   });

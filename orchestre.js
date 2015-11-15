@@ -1,10 +1,14 @@
 var express = require('express');
 var app = express();
-var fs = require('fs');
+var fs = require('fs-extra');
+var chalk = require('chalk');
 
-var db = require('./models/db');
+require('./models/db');
 var mongoose = require('mongoose');
 var Song = mongoose.model('Song');
+
+require('./config/passport');
+var passport = require('passport');
 
 var search = require('./routes/search');
 var songs = require('./routes/songs');
@@ -16,15 +20,23 @@ var scan = require('./routes/scan');
 
 var conf = require('./config');
 
-app.use(require('morgan')());
+app.use(require('morgan')(conf.logFormat));
 app.use(require('body-parser')());
-app.use(require('cookie-parser')());
+//app.use(require('cookie-parser')());
+/*
 app.use(require('cookie-session')({
-  secret: 'ASYDctgfeDKFLS646',
+  secret: conf.cookieSecret,
   cookie: {
     maxAge: 60 * 60 * 1000
   }
+}));*/
+app.use(require('express-session')({
+  secret: conf.cookieSecret,
+  resave: false,
+  saveUninitialized: false
 }));
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use('/search', search);
 app.use('/songs', songs);
@@ -85,5 +97,17 @@ app.use(function(req, res) {
 });
 
 app.listen(conf.port, conf.host, function() {
-  console.log('Server running on port ' + conf.port);
+  console.log(chalk.green('Server running on port ' + chalk.bold(conf.port)));
+
+  fs.ensureDir('./public/img/artists', function(err) {
+    if(err) {
+      console.log(err);
+    }
+  });
+
+  fs.ensureDir('./public/img/albums', function(err) {
+    if(err) {
+      console.log(err);
+    }
+  });
 });

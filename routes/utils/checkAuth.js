@@ -1,25 +1,23 @@
-var checkAuth = function (req, res, next) {
-  if (req.session.authed) {
-    next();
-  } else {
-    var error = new Error('You are not logged in.');
-    error.status = 401;
-    return next(error);
+// Ensure user is authenticated.
+var ensureAuthenticated = function (req, res, next) {
+  if (req.isAuthenticated()) {
+    return next();
   }
+  res.sendStatus(401);
 };
 
-var isAdmin = function (req, res, next) {
-  if(req.session.role === 'admin') {
-    next();
+// Ensure user is an admin.
+var ensureAdmin = function (req, res, next) {
+  console.log(req.user);
+  if(req.user && req.user.role === 'admin') {
+    return next();
   } else {
-    var error = new Error('This requires more privileges.');
-    error.status = 403;
-    return next(error);
+    res.sendStatus(403);
   }
 };
 
 module.exports = {
-  checkAuth: checkAuth,
-  isAdmin: isAdmin
+  ensureAuthenticated: ensureAuthenticated,
+  ensureAdmin: ensureAdmin
 };
 

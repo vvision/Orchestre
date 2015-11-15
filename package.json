@@ -1,7 +1,7 @@
 {
   "name": "Orchestre",
-  "version": "0.1.1",
-  "author": "vvision <email>vvision@sfr.fr</email>",
+  "version": "0.1.4",
+  "author": "Victor Voisin (vvision) <email>victor.voisin@vvoisin.org</email>",
   "description": "Orchestre is a streaming plateform which focus on playing flac files in the browser.",
   "license": "GPL-3.0",
   "repository": {
@@ -15,24 +15,48 @@
     "node": "&gt;=0.10"
   },
   "main": "node orchestre.js",
-  "dependencies" : {
-    "express": "4.10.4",
-    "body-parser": "1.0.2",
-    "multiparty": "3.2.4",
-    "cookie-parser": "1.0.1",
-    "cookie-session": "1.0.1",
-    "morgan": "1.0.0",
-    "async": "0.8.0",
-    "npmlog": "0.0.6",
-    "mongoose": "3.8.21",
-    "musicmetadata": "1.0.0"
+  "dependencies": {
+    "express": "~4.13.3",
+    "express-session": "~1.12.1",
+    "body-parser": "~1.14.1",
+    "multiparty": "~4.1.2",
+    "cookie-parser": "~1.4.0",
+    "cookie-session": "~1.2.0",
+    "morgan": "~1.6.1",
+    "async": "~1.5.0",
+    "npmlog": "~2.0.0",
+    "mongoose": "~4.2.5",
+    "musicmetadata": "~2.0.2",
+    "request": "~2.65.0",
+    "fs-extra": "~0.26.2",
+    "underscore": "~1.8.3",
+    "chalk": "~1.1.1",
+    "passport": "~0.3.2",
+    "passport-local": "~1.0.0",
+    "bcrypt": "~0.8.5",
+    "readline-sync": "~1.2.21"
   },
   "devDependencies": {
-    "mocha": "1.21.4",
-    "chai": "1.0.4",
-    "request": "2.34.0"
+    "mocha": "~2.3.3",
+    "chai": "~3.4.1",
+    "gulp": "~3.9.0",
+    "handlebars": "~4.0.3",
+    "requirejs": "~2.1.20",
+    "requirejs-text": "~2.0.12",
+    "jssha": "~2.0.1",
+    "jquery": "~2.1.4",
+    "jquery-ui-bundle": "~1.11.4",
+    "av": "~0.4.4",
+    "flac.js": "~0.2.1",
+    "backbone": "~1.2.3",
+    "backbone.paginator": "~2.0.2",
+    "bb-collection-view": "~0.13.0",
+    "bootstrap": "~3.3.5",
+    "mp3": "~0.1.0",
+    "gulp-eslint": "~1.0.0"
   },
   "scripts": {
+    "postinstall": "gulp copy-js copy-fonts copy-css build-copy-player-codecs",
     "start": "node ./orchestre.js",
     "test": " mocha -R spec ./test/*.js"
   }

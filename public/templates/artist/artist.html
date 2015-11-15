@@ -1,4 +1,8 @@
 <div>
   <h2 class="artistName">{{name}}</h2>
+  {{#thumb}}
+    <img src="/img/artists/{{id}}.jpg"/>
+  {{/thumb}}
+  <div class="artist-desc-text">{{& desc}}</div>
   <div class="albums"><div>
 </div>

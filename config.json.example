@@ -1,0 +1,10 @@
+{
+  "host": "localhost",
+  "port": 8080,
+  "domain": "",
+  "proxy": null,
+  "cookieSecret": "CHANGE_ME",
+  "musicPath": "./Musique",
+  "extensions": ["flac", "mp3"],
+  "logFormat": "combined"
+}

@@ -4,19 +4,27 @@ var mongoose = require('mongoose');
 var Album = mongoose.model('Album');
 var Song = mongoose.model('Song');
 
+var fs = require('fs');
+var async = require('async');
+var musicmetadata = require('musicmetadata');
+var auth = require('./utils/checkAuth');
+
+
 router.get('/', albums);
+router.get('/scan', auth.ensureAuthenticated, auth.ensureAdmin, importPicture);
 router.get('/:id', aboutAlbum);
 router.get('/:id/songs', songsFromAlbum);
+
 
 module.exports = router;
 
 //TODO: Pagination
 function albums (req, res) {
-  var start = req.query.start;
-  var limit = req.query.limit;
 
   Album.find(function (err, docs) {
-    if(err) console.error(err);
+    if(err) {
+      console.error(err);
+    }
     console.log(docs);
     res.send(docs);
   });
@@ -56,6 +64,57 @@ function songsFromAlbum(req, res, next) {
         return next(error);
       }
       res.send(songs);
+    });
+  });
+}
+
+function importPicture(req, res) {
+  Album.find(function (err, albums) {
+    if(err) {
+      console.error(err);
+    }
+
+    async.eachSeries(albums, function (album, cb) {
+      //console.log(album);
+      Song.findOne({albumId: album._id}).exec(function(err, song) {
+        console.log(song.title);
+        musicmetadata(fs.createReadStream(song.dir + '/' + song.fileName), { duration: false }, function (err, metadata) {
+          if(err) {
+            console.error(err);
+            cb();
+          }
+          console.log(metadata);
+          var picture = metadata.picture[0];
+          var id = song.albumId;
+
+          if(picture) {
+            var path = './public/img/albums/' + id + '.' + picture.format;
+            fs.exists(path, function(exists) {
+              if (!exists) {
+                fs.writeFile(path, picture.data, function (err) {
+                  if (err) {
+                    console.log(err);
+                  }
+                  cb();
+                  console.log('It\'s saved!');
+                });
+              } else {
+                console.log('Picture already exists for album:' + album.name);
+                cb();
+              }
+            });
+          } else {
+            console.log('No picture available for album:' + album.name);
+            cb();
+          }
+        });
+
+      });
+    }, function (err) {
+      if(err) {
+        console.error(err);
+      }
+      res.send('OK');
     });
   });
 }

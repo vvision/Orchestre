@@ -10,6 +10,10 @@ body {
   padding-bottom: 60px;
 }
 
+.dropdown {
+  color: black;
+}
+
 .block {
   background-color: rgba(0, 0, 0, 0.3);
   padding-left: 12px;
@@ -20,7 +24,7 @@ body {
   margin: 20px 0;
 }
 
-.miniAlbumImg {
+.player-data-cover {
   width: 100px;
   height: 100px;
 }
@@ -277,4 +281,86 @@ input, textarea{
 /*Controls*/
 .player-controls-playback > button.active > span {
   color: #FF2D00;
+}
+
+/*Queue*/
+
+.queue-song:hover {
+  cursor: move;
+}
+
+.queue-song button,.queue-song  input+label {
+  display: inline-block;
+  vertical-align: middle;
+  margin: 0 2px;
+  padding: 5px 10px;
+  transition: background .3s ease;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.queue-song button svg,.queue-song input+label svg {
+  width: 18px;
+  height: 18px;
+  display: block;
+  fill: currentColor;
+  transition: fill .3s ease;
+}
+
+.queue-song input+label,.queue-song  input.inverted:checked+label {
+  color: #565d64;
+}
+
+.queue-song button,.queue-song input.inverted+label,.queue-song input:checked+label {
+  color: #cbd0d3;
+}
+
+.queue-song button {
+  border: 0;
+  background: 0 0;
+  overflow: hidden;
+}
+
+.queue-song button:focus,.queue-song input:focus+label {
+  outline: #000 dotted thin;
+  outline-offset: 1px;
+  color: #fff;
+}
+
+.queue-song button:hover,.queue-song input+label:hover {
+  background: #3498db;
+  color: #fff;
+}
+
+.queue-song {
+  display: inline-block;
+  vertical-align: middle;
+  color: #cbd0d3;
+  font-weight: 600;
+  font-size: 14px;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  background-color: #393F4F;
+  border-radius: 2px;
+  padding: 5px;
+  margin: 2px 7px;
+  border: 0px;
+}
+
+.queue-data, .queue-song {
+  list-style: none;
+}
+
+.sortable {
+  padding: 35px 0px;
+}
+
+
+/*Song list*/
+.flac {
+  background-color: green;
+}
+
+.mp3 {
+  background-color: orange;
 }

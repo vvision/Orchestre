@@ -2,39 +2,59 @@ var express = require('express');
 var router = express.Router();
 var mongoose = require('mongoose');
 var Song = mongoose.model('Song');
-var checkAuth = require('./utils/checkAuth').checkAuth;
+var auth = require('./utils/checkAuth');
+var paginate = require('./utils/paginate');
 
 router.get('/', songs);
 router.get('/:id', aboutSong);
 router.get('/:id/about', aboutSong);
-router.get('/:id/stream', checkAuth, streamSong);
+router.get('/:id/stream', auth.ensureAuthenticated, streamSong);
 router.get('/:id/title', songTitle);
 router.get('/:id/artist', songArtist);
 router.get('/:id/album', songAlbum);
 router.get('/:id/track', trackNumber);
 router.get('/:id/genre', songGenre);
 router.get('/:id/rate', songRate);
-router.post('/:id/rate/inc', checkAuth, incrementRate);//TODO Update rather than POST
-router.post('/:id/rate/dec', checkAuth, decrementRate);//TODO Same here
+router.get('/:id/download/:title', auth.ensureAuthenticated, streamSong);
+router.post('/:id/rate/inc', auth.ensureAuthenticated, incrementRate);//TODO Update rather than POST
+router.post('/:id/rate/dec', auth.ensureAuthenticated, decrementRate);//TODO Same here
 
 module.exports = router;
 
 
 function songs (req, res) {
-  var pageNumber = req.query.page ? req.query.page : 1;
-  var resultsPerPage = 50;
-  var skipFrom = (pageNumber * resultsPerPage) - resultsPerPage;
+  var query = req.query.q || '';
+  var field = req.query.field || 'title';
+  var currentPage = req.query.page || 1;
+  var size = req.query.size || 50;
+  var skipFrom = (currentPage * size) - size;
+  console.log(req.query);
 
-  Song.find({}, {'dir': 0, '__v': 0, 'fileName': 0}).sort('artist album trackNumber').skip(skipFrom).limit(resultsPerPage).exec(function (err, docs) {
-    //console.log(docs);
+  var search = {};
+  search[field] = { '$regex': query, '$options': 'i' };
+  console.log(search);
+  Song.count(search, function(err, nSongs) {
     if(err) {
-      console.error(err);
+      console.log(err);
     }
-    res.send(docs);
+
+    paginate(currentPage, nSongs, 'songs', query, field, size, req.protocol, function(links) {
+      console.log(links);
+      res.links(links);
+
+      //Find songs matching the query
+      Song.find(search, {'dir': 0, '__v': 0, 'fileName': 0}).sort('artist album trackNumber').skip(skipFrom).limit(size).exec(function (err, docs) {
+        console.log(docs);
+        if(err) {
+          console.error(err);
+        }
+        res.send(docs);
+      });
+    });
   });
 }
 
-function aboutSong(req, res, next) {
+function aboutSong(req, res) {
   var id = req.params.id;
   console.log(id);
 
@@ -44,19 +64,18 @@ function aboutSong(req, res, next) {
   });
 }
 
-function streamSong (req, res, next) {
+function streamSong (req, res) {
   var id = req.params.id;
   console.log(id);
   Song.findById(id, function (err, doc) {
     console.log(doc);
-    var name = doc.title;
     var filepath = doc.dir + '/' + doc.fileName;
     console.log(filepath);
     res.sendFile(filepath);
   });
 }
 
-function songTitle(req, res, next) {
+function songTitle(req, res) {
   var id = req.params.id;
   console.log(id);
   Song.findById(id, function (err, doc) {
@@ -68,7 +87,7 @@ function songTitle(req, res, next) {
   });
 }
 
-function songArtist(req, res, next) {
+function songArtist(req, res) {
   var id = req.params.id;
   console.log(id);
   Song.findById(id, function (err, doc) {
@@ -79,7 +98,7 @@ function songArtist(req, res, next) {
   });
 }
 
-function songAlbum(req, res, next) {
+function songAlbum(req, res) {
   var id = req.params.id;
   console.log(id);
   Song.findById(id, function (err, doc) {
@@ -90,7 +109,7 @@ function songAlbum(req, res, next) {
   });
 }
 
-function trackNumber(req, res, next) {
+function trackNumber(req, res) {
   var id = req.params.id;
   console.log(id);
   Song.findById(id, function (err, doc) {
@@ -102,7 +121,7 @@ function trackNumber(req, res, next) {
   });
 }
 
-function songGenre(req, res, next) {
+function songGenre(req, res) {
   var id = req.params.id;
   console.log(id);
   Song.findById(id, function (err, doc) {
@@ -113,7 +132,7 @@ function songGenre(req, res, next) {
   });
 }
 
-function songRate(req, res, next) {
+function songRate(req, res) {
   var id = req.params.id;
   console.log(id);
   Song.findById(id, function (err, doc) {
@@ -127,15 +146,19 @@ function songRate(req, res, next) {
 /* Increment the rate of a given song
 *  TODO: Check which error code to send
 */
-function incrementRate(req, res, next) {
+function incrementRate(req, res) {
   var id = req.params.id;
   Song.where({_id: id}).findOne(function(err, data) {
-    if(err) res.send('Error');
+    if(err) {
+      res.send('Error');
+    }
     //console.log(data);
 
     if(data.rate < 5) {
       Song.findOneAndUpdate({_id: id}, {$inc: {rate: 1}}, function(err) {
-        if(err) console.log(err);
+        if(err) {
+          console.log(err);
+        }
         res.sendStatus(200);
       });
     } else {
@@ -147,16 +170,20 @@ function incrementRate(req, res, next) {
 /* Decrement the rate of a given song
 *  TODO: Check which error code to send
 */
-function decrementRate (req, res, next) {
+function decrementRate (req, res) {
   var id = req.params.id;
 
   Song.where({_id: id}).findOne(function(err, data) {
-    if(err) res.send('Error');
+    if(err) {
+      res.send('Error');
+    }
     //console.log(data);
 
     if(data.rate > 0) {
       Song.findOneAndUpdate({_id: id}, {$inc: {rate: -1}}, function(err) {
-        if(err) console.log(err);
+        if(err) {
+          console.log(err);
+        }
         res.sendStatus(200);
       });
     } else {

@@ -1,7 +1,7 @@
 define([
   'jquery',
   'backbone'
-  ], function($, Backbone) {
+], function($, Backbone) {
 
   var User = Backbone.Model.extend({
     urlRoot: '/users',

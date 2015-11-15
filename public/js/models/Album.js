@@ -1,7 +1,7 @@
 define([
   'jquery',
   'backbone'
-  ], function($, Backbone) {
+], function($, Backbone) {
 
   var Album = Backbone.Model.extend({
     urlRoot: '/albums'

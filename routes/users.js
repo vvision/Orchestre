@@ -2,16 +2,17 @@ var express = require('express');
 var router = express.Router();
 var mongoose = require('mongoose');
 var User = mongoose.model('User');
-var checkAuth = require('./utils/checkAuth');
+var auth = require('./utils/checkAuth');
+var bcrypt = require('bcrypt');
 
-router.get('/', checkAuth.checkAuth, users);
-router.post('/', checkAuth.isAdmin, createUser);//TODO: Check Admin
+router.get('/', auth.ensureAuthenticated, users);
+router.post('/', auth.ensureAuthenticated, auth.ensureAdmin, createUser);//TODO: Check Admin
 router.get('/:id', aboutUser);
 router.get('/:id/about', aboutUser);
 
 module.exports = router;
 
-function users (req, res, next) {
+function users (req, res) {
   var pageNumber = req.query.page ? req.query.page : 1;
   var resultsPerPage = 50;
   var skipFrom = (pageNumber * resultsPerPage) - resultsPerPage;
@@ -30,22 +31,37 @@ function createUser (req, res, next) {
   //console.log(user);
 
   User.findOne({username: user.username}, {'email': 0, 'name': 0}, function(err, doc) {
-    if(err) console.log(err);
+    if(err) {
+      console.log(err);
+    }
     if(doc) {
       var error = new Error('User already exists.');
       error.status = 500;
       return next(error);
     } else {
-      user.save(function (err, data) {
-        if (err) console.log(err);
-        console.log(data);
-        res.send(data);
+      bcrypt.genSalt(10, function(err, salt) {
+        if(err) {
+          console.log(err);
+        }
+        bcrypt.hash(user.password, salt, function(err, hash) {
+          if(err) {
+            console.log(err);
+          }
+          user.password = hash;
+          user.save(function (err, data) {
+            if(err) {
+              console.log(err);
+            }
+            console.log(data);
+            res.send(data);
+          });
+        });
       });
     }
   });
 }
 
-function aboutUser (req, res, next) {
+function aboutUser (req, res) {
   var id = req.params.id;
   console.log(id);
 
