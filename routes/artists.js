@@ -4,6 +4,7 @@ var request = require('request');
 var fs = require('fs');
 var async = require('async');
 var auth = require('./utils/checkAuth');
+var paginate = require('./utils/paginate');
 var mongoose = require('mongoose');
 var Artist = mongoose.model('Artist');
 var Album = mongoose.model('Album');
@@ -20,12 +21,34 @@ module.exports = router;
 
 //TODO: Pagination
 function artists(req, res) {
-  Artist.find(function (err, docs) {
+  var query = req.query.q || '';
+  var currentPage = parseInt(req.query.page) || 1;
+  var size = parseInt(req.query.size) || 50;
+  var skipFrom = (currentPage * size) - size;
+  console.log(req.query);
+
+  Artist.count({name: { '$regex': query, '$options': 'i' }}, function(err, nElements) {
     if(err) {
-      console.error(err);
+      console.log(err);
     }
-    console.log(docs);
-    res.send(docs);
+
+    //Total number of pages in header
+    var lastPage = Math.ceil(nElements / size);
+    res.append('X-Total-Count', lastPage);
+
+    paginate(currentPage, nElements, 'artists', query, '', size, req.protocol, function(links) {
+      console.log(links);
+      res.links(links);
+
+      //Find artists matching the query
+      Artist.find({name: { '$regex': query, '$options': 'i' }}, {'__v': 0}).sort('name').skip(skipFrom).limit(size).exec(function (err, docs) {
+        console.log(docs);
+        if(err) {
+          console.error(err);
+        }
+        res.send(docs);
+      });
+    });
   });
 }
 

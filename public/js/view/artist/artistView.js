@@ -6,7 +6,7 @@ define([
   'js/models/Album',
   'text!templates/artist/artist.html',
   'text!templates/album/thumb.html'
-  ], function($, Backbone, Handlebars, Artist, Album, ArtistTemplate, AlbumThumbTemplate) {
+], function($, Backbone, Handlebars, Artist, Album, ArtistTemplate, AlbumThumbTemplate) {
 
   return Backbone.View.extend({
     template: Handlebars.compile(ArtistTemplate),
@@ -32,7 +32,7 @@ define([
       this.albums.each(function(doc) {
         $('.albums').append(Handlebars.compile(AlbumThumbTemplate)({
           albumId: doc.get('_id'),
-          albumName: doc.get('name'),
+          albumName: doc.get('name')
         }));
       });
     },

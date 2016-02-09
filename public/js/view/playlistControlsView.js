@@ -2,17 +2,18 @@ define([
   'jquery',
   'backbone',
   'handlebars',
+  'orchestre',
   'backbone-collectionView',
   'js/view/song/songForPlaylist',
   'text!templates/playlistControls.html'
-], function($, Backbone, Handlebars, BackboneCollectionView, SongForPlaylistView, PlaylistControlsTemplate) {
+], function($, Backbone, Handlebars, Orchestre, BackboneCollectionView, SongForPlaylistView, PlaylistControlsTemplate) {
 
   return Backbone.View.extend({
     template: Handlebars.compile(PlaylistControlsTemplate),
 
-    initialize: function (options) {
-      this.orchestre = options.orchestre;
-      this.playlist = options.orchestre.get('playlist');
+    initialize: function () {
+      this.player = Orchestre.getOrchestre().player;
+      this.playlist = this.player.get('playlist');
       console.log(this.playlist);
 
       this.playlistCollectionView = new Backbone.CollectionView({

@@ -8,9 +8,6 @@ var Album = mongoose.model('Album');
 var Genre = mongoose.model('Genre');
 var conf = require('../config');
 
-router.get('/songs', searchSong);
-router.get('/artists', searchArtist);
-router.get('/albums', searchAlbum);
 router.get('/genres', searchGenre);
 
 module.exports = router;
@@ -51,98 +48,10 @@ function paginate(currentPage, totalElements, type, query, field, size, protocol
   callback(links);
 }
 
-function searchSong(req, res) {
-  var query = req.query.q || '';
-  var field = req.query.field || 'title';
-  var currentPage = req.query.page || 1;
-  var size = req.query.size || 50;
-  var skipFrom = (currentPage * size) - size;
-  console.log(req.query);
-
-  var search = {};
-  search[field] = { '$regex': query, '$options': 'i' };
-  console.log(search);
-  Song.count(search, function(err, nSongs) {
-    if(err) {
-      console.log(err);
-    }
-
-    paginate(currentPage, nSongs, 'songs', query, field, size, req.protocol, function(links) {
-      console.log(links);
-      res.links(links);
-
-      //Find songs matching the query
-      Song.find(search, {'dir': 0, '__v': 0, 'fileName': 0}).sort('artist album trackNumber').skip(skipFrom).limit(size).exec(function (err, docs) {
-        console.log(docs);
-        if(err) {
-          console.error(err);
-        }
-        res.send(docs);
-      });
-    });
-  });
-}
-
-function searchArtist(req, res) {
-  var query = req.query.q || '';
-  var currentPage = req.query.page || 1;
-  var size = req.query.size || 50;
-  var skipFrom = (currentPage * size) - size;
-  console.log(req.query);
-
-  Artist.count({name: { '$regex': query, '$options': 'i' }}, function(err, nElements) {
-    if(err) {
-      console.log(err);
-    }
-
-    paginate(currentPage, nElements, 'artists', query, '', size, req.protocol, function(links) {
-      console.log(links);
-      res.links(links);
-
-      //Find artists matching the query
-      Artist.find({name: { '$regex': query, '$options': 'i' }}, {'__v': 0}).sort('name').skip(skipFrom).limit(size).exec(function (err, docs) {
-        console.log(docs);
-        if(err) {
-          console.error(err);
-        }
-        res.send(docs);
-      });
-    });
-  });
-}
-
-function searchAlbum(req, res) {
-  var query = req.query.q || '';
-  var currentPage = req.query.page || 1;
-  var size = req.query.size || 50;
-  var skipFrom = (currentPage * size) - size;
-  console.log(req.query);
-
-  Album.count({name: { '$regex': query, '$options': 'i' }}, function(err, nElements) {
-    if(err) {
-      console.log(err);
-    }
-
-    paginate(currentPage, nElements, 'albums', query, '', size, req.protocol, function(links) {
-      console.log(links);
-      res.links(links);
-
-      //Find albums matching the query
-      Album.find({name: { '$regex': query, '$options': 'i' }}, {'__v': 0}).sort('name').skip(skipFrom).limit(size).exec(function (err, docs) {
-        console.log(docs);
-        if(err) {
-          console.error(err);
-        }
-        res.send(docs);
-      });
-    });
-  });
-}
-
 function searchGenre(req, res) {
   var query = req.query.q || '';
-  var currentPage = req.query.page || 1;
-  var size = req.query.size || 50;
+  var currentPage = parseInt(req.query.page) || 1;
+  var size = parseInt(req.query.size) || 50;
   var skipFrom = (currentPage * size) - size;
   console.log(req.query);
 

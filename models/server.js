@@ -9,4 +9,4 @@ var serverSchema = mongoose.Schema({
   enabled: String
 });
 
-var Server = mongoose.model('Server', serverSchema);
+mongoose.model('Server', serverSchema);

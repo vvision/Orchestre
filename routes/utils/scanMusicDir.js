@@ -252,7 +252,7 @@ var saveSongs = function (data, allowedExtension, callback) {
       //Get metadata from the file
       //console.log(path + el);
       //Set duration to false to prevent reading the entire file.
-      musicmetadata(fs.createReadStream(el), {duration: false}, function (err, metadata) {
+      musicmetadata(fs.createReadStream(el), {duration: true}, function (err, metadata) {
         if(err) {
           console.error(err);
           cb();
@@ -269,7 +269,8 @@ var saveSongs = function (data, allowedExtension, callback) {
         var album = new Album({
           name: metadata.album,
           year: metadata.year,
-          artist: metadata.artist[0]
+          artist: metadata.artist[0],
+          tracks: metadata.track.of
         });
         var song = new Song({
           fileName: filename,
@@ -279,6 +280,7 @@ var saveSongs = function (data, allowedExtension, callback) {
           album: metadata.album,
           genre: metadata.genre,
           rate: 0,
+          duration: metadata.duration,
           trackNumber: metadata.track.no,
           type: extension
         });

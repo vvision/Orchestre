@@ -2,20 +2,21 @@ define([
   'jquery',
   'backbone',
   'handlebars',
+  'orchestre',
   '/js/view/song/resultsView.js',
   '/js/view/artist/resultsView.js',
   '/js/view/album/resultsView.js',
   'text!templates/search.html',
   'text!templates/simpleSearch.html'
-], function($, Backbone, Handlebars, SongResultsView, ArtistResultsView, AlbumResultsView, SearchSongTemplate, SimpleSearchTemplate) {
+], function($, Backbone, Handlebars, Orchestre, SongResultsView, ArtistResultsView, AlbumResultsView, SearchSongTemplate, SimpleSearchTemplate) {
 
   return Backbone.View.extend({
     template: Handlebars.compile(SearchSongTemplate),
 
     initialize: function (options) {
       this.searchObj = options.searchObj;
-      this.orchestre = options.orchestre;
-      this.playlist = options.orchestre.get('playlist');
+      this.player = Orchestre.getOrchestre().player;
+      this.playlist = this.player.get('playlist');
       this.field = 'title';
     },
 
@@ -39,7 +40,6 @@ define([
       //TODO: Switch case ?
       if(this.searchObj === 'song') {
         $('.results', this.$el).html(new SongResultsView({
-          orchestre: self.orchestre,
           filter: queryStr,
           field: self.field
         }).render().el);
@@ -51,10 +51,9 @@ define([
     },
 
     render: function () {
-      var self= this;
       if(this.searchObj === 'song') {
         this.$el.html(this.template());
-        $('.results', this.$el).html(new SongResultsView({orchestre: self.orchestre, filter: '', field: ''}).render().el);
+        $('.results', this.$el).html(new SongResultsView({filter: '', field: ''}).render().el);
       } else if(this.searchObj === 'artist') {
         this.$el.html(Handlebars.compile(SimpleSearchTemplate));
         $('.results', this.$el).html(new ArtistResultsView({filter: ''}).render().el);

@@ -1,19 +1,19 @@
 Orchestre
 =========
 
-Orchestre is a streaming plateform which focus on being able to play flac files in the browser.
+Orchestre is a streaming platform which focus on being able to play flac files in the browser.
 
 
 # Installation
 
 * Clone it.
 * Change directory: cd Orchestre.
-* Install Gulp globally : `npm install --global gulp`
 * Install dependencies: `npm install`.
 * Configure Orchestre: `cp config.json.example config.json`.
 * Edit configuration.
+* Create first admin `node createAdmin.js`
 * Start the server: `npm start` or `node orchestre.js`.
-* You can now sign in with user `test` and password `test`.
+* You can now sign in with the user you just created.
 
 I recommend using a tool like *forever* to run the server.
 
@@ -23,6 +23,7 @@ I recommend using a tool like *forever* to run the server.
 * Node.Js
 * MongoDB
 * (Gulp)
+* libav-tools (to transcode)
 
 
 # Configuration
@@ -40,13 +41,29 @@ As this is not an accurate way of seeking, it will jump to the closer seek point
 
 Indeed, if the file has a seektable which seek points every seconds, seeking will work well.
 So if seeking fail, you should add a proper seektable with metaflac:
-``
+```
 metaflac --add-seekpoint=1s *.flac
-``
+```
+
+## Transcoding
+
+Transcoding to mp3 200k is available.
+It should provide a x5 reduction in size.
+To enable it just set ``transcodeFlac`` to ``true`` in configuration file.
+
+Transcoding requires avconv :
+```
+sudo aptitude install libav-tools
+```
+
+You might also need libmp3lame to convert to mp3 :
+```
+sudo aptitude install libmp3lame0
+```
 
 # License
 
-Copyright (C) 2013-2015 Victor Voisin
+Copyright (C) 2013-2016 Victor Voisin
 
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 3 of the License.
 

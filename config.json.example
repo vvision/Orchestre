@@ -6,5 +6,6 @@
   "cookieSecret": "CHANGE_ME",
   "musicPath": "./Musique",
   "extensions": ["flac", "mp3"],
-  "logFormat": "combined"
+  "logFormat": "combined",
+  "transcodeFlac": "false"
 }

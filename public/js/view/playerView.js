@@ -3,26 +3,27 @@ define([
   'backbone',
   'underscore',
   'handlebars',
+  'orchestre',
   'text!templates/player.html',
   'text!templates/player-media.html'
-], function($, Backbone, _, Handlebars, PlayerTemplate, PlayerMediaTemplate) {
+], function($, Backbone, _, Handlebars, Orchestre, PlayerTemplate, PlayerMediaTemplate) {
 
   return Backbone.View.extend({
     template: Handlebars.compile(PlayerTemplate),
 
-    initialize: function(options) {
-      this.orchestre = options.orchestre;
-      this.playlist = options.orchestre.get('playlist');
+    initialize: function() {
+      this.player = Orchestre.getOrchestre().player;
+      this.playlist = this.player.get('playlist');
       console.log(this.playlist);
-      this.player = options.orchestre.get('player');
+      this.aurora = this.player.get('aurora');
 
-      options.orchestre.on('playNewSong', this.playNewSong, this);
+      this.player.on('playNewSong', this.playNewSong, this);
 
-      this.listenTo(this.orchestre, 'change:player', this.bindPlayerEvents);
-      this.listenTo(this.orchestre, 'change:loop', this.activateLoopButton);
-      this.listenTo(this.orchestre, 'change:rand', this.activateRandButton);
-      this.listenTo(this.orchestre, 'change:mute', this.activateMuteButton);
-      this.listenTo(this.orchestre, 'change:pause', this.activatePlayPauseButton);
+      this.listenTo(this.player, 'change:aurora', this.bindPlayerEvents);
+      this.listenTo(this.player, 'change:loop', this.activateLoopButton);
+      this.listenTo(this.player, 'change:rand', this.activateRandButton);
+      this.listenTo(this.player, 'change:mute', this.activateMuteButton);
+      this.listenTo(this.player, 'change:pause', this.activatePlayPauseButton);
     },
 
     events: {
@@ -36,35 +37,37 @@ define([
       'change .player-volume': 'changeVolume'
     },
 
-    bindPlayerEvents: function(orchestre, player) {
+    bindPlayerEvents: function(player, aurora) {
       var self = this;
 
-      player.on('duration', function(dr) {
+      aurora.on('duration', function(dr) {
         console.log(dr);
         $('.player-progress-played')[0].max = dr;
       });
 
-      player.on('progress', function(ct) {
+      aurora.on('progress', function(ct) {
         $('.player-duration').html(self.convertMs(ct));
         $('.player-progress-played')[0].value = ct;
         $('.player-progress-played')[0].firstElementChild.innerHTML = ct;
       });
 
-      player.on('buffer', function(buffered) {
+      aurora.on('buffer', function(buffered) {
         $('.player-progress-buffer')[0].value = buffered;
         $('.player-progress-buffer')[0].firstElementChild.innerHTML = buffered;
       });
 
-      player.on('end', function() {
+      aurora.on('end', function() {
         console.log('END OF SONG!');
-        if(!self.orchestre.get('loop')) {
-          var nextSong = self.orchestre.getNextSong(self.orchestre.get('playing'));
+        if(!self.player.get('loop')) {
+          self.cleanTranscode(self.player.get('playing').get('_id'));
+
+          var nextSong = self.player.getNextSong(self.player.get('playing'));
           //Check if there is a song to play next
           if(nextSong) {
-            self.orchestre.jumpToNextSong();
+            self.player.jumpToNextSong();
             self.playNewSong();
           } else {
-            self.orchestre.set({pause: true});
+            self.player.set({pause: true});
             console.log('END OF PLAYLIST');
           }
         } else {
@@ -72,7 +75,7 @@ define([
         }
       });
 
-      player.on('error', function(err) {
+      aurora.on('error', function(err) {
         console.log(err);
       });
     },
@@ -81,13 +84,13 @@ define([
       var size = event.currentTarget.clientWidth;
       //Position between 0 and 1.
       var pos = this.getClickPosition(event).x / size;
-      var newTime = Math.floor(pos * this.player.duration);
+      var newTime = Math.floor(pos * this.aurora.duration);
       console.log(newTime);
       try {
-        this.player.seek(parseInt(newTime));
+        this.aurora.seek(parseInt(newTime));
       } catch (e) {
         console.error('unable to seek on this song: ' + e.message);
-        this.player.play();
+        this.aurora.play();
       }
     },
     // Get click position relative to parent
@@ -115,29 +118,29 @@ define([
     },
 
     changeVolume: function(element) {
-      this.orchestre.changeVolume(element.currentTarget.valueAsNumber);
+      this.player.changeVolume(element.currentTarget.valueAsNumber);
     },
 
     previousSong: function() {
-      this.orchestre.jumpToPreviousSong();
+      this.player.jumpToPreviousSong();
       this.playNewSong();
     },
 
     nextSong: function() {
-      this.orchestre.jumpToNextSong();
+      this.player.jumpToNextSong();
       this.playNewSong();
     },
 
     randUpdate: function() {
-      this.orchestre.toggleRand();
+      this.player.toggleRand();
     },
 
     loopUpdate: function() {
-      this.orchestre.toggleLoop();
+      this.player.toggleLoop();
     },
 
     muteUpdate: function() {
-      this.orchestre.toggleMute();
+      this.player.toggleMute();
     },
 
     activateRandButton: function(orchestre, rand) {
@@ -176,13 +179,13 @@ define([
     },
 
     playPause: function() {
-      if(this.orchestre.get('player')) {
-        if(this.orchestre.get('pause')) {
+      if(this.player.get('aurora')) {
+        if(this.player.get('pause')) {
           //Resume music
-          this.orchestre.play();
+          this.player.play();
         } else {
           //Pause music
-          this.orchestre.pause();
+          this.player.pause();
         }
       } else {
         //No songs playing: first click.
@@ -192,13 +195,13 @@ define([
 
     playNewSong: function() {
       //Stop other song before playing
-      this.orchestre.stop();
+      this.player.stop();
       console.log('STOP PLAYING');
 
-      var song = this.orchestre.get('playing');
+      var song = this.player.get('playing');
       if(!song) {
-        this.orchestre.jumpToFirstSong();
-        song = this.orchestre.get('playing');
+        this.player.jumpToFirstSong();
+        song = this.player.get('playing');
       }
 
       if(song) {
@@ -214,16 +217,46 @@ define([
       var uri = '/songs/' + song.get('_id') + '/stream';
       console.log(uri);
 
-      //First create player
-      this.player = AV.Player.fromURL(uri);
-      this.player.volume = this.orchestre.get('volume');
-      //Then attach player to Orchestre
-      this.orchestre.set({player: this.player});
-      //And play !
-      this.orchestre.play();
+      var self= this;
+      this.checkTranscode(song.get('_id'), function() {
+        //First create player
+        self.aurora = AV.Player.fromURL(uri);
+        self.aurora.volume = self.player.get('volume');
+        //Then attach player to Orchestre
+        self.player.set({aurora: self.aurora});
+        //And play !
+        self.player.play();
 
-      this.nowPlayingDisplay(song);
-      $('.player-controls-play').children('span').removeClass('glyphicon-play').addClass('glyphicon-pause');
+        self.nowPlayingDisplay(song);
+        $('.player-controls-play').children('span').removeClass('glyphicon-play').addClass('glyphicon-pause');
+      });
+
+    },
+
+    checkTranscode: function(id, callback) {
+      $.ajax({
+        url: '/songs/' + id + '/transcode',
+        type: 'GET',
+        success: function () {
+          callback();
+        },
+        error: function(err) {
+          console.log('error in transcoding ' + err);
+        }
+      });
+    },
+
+    cleanTranscode: function(id) {
+      $.ajax({
+        url: '/songs/' + id + '/clean',
+        type: 'GET',
+        success: function () {
+          console.log('cleaned');
+        },
+        error: function(err) {
+          console.log('error while cleaning ' + err);
+        }
+      });
     },
 
     nowPlayingDisplay: function(song) {

@@ -4,8 +4,7 @@ var conf = require('../../config');
 function paginate(currentPage, totalElements, type, query, field, size, protocol, callback) {
   //Pagination
   var hostname = conf.domain !== '' ? conf.domain : conf.host + ':' + conf.port;
-  //TODO: remove search/
-  var uri = protocol + '://' + hostname + '/search/' + type +'?';
+  var uri = protocol + '://' + hostname + '/' + type +'?';
   var lastPage = Math.ceil(totalElements / size);
 
   //Create query parameters

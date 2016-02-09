@@ -5,7 +5,7 @@ define([
   'handlebars',
   'text!templates/results.html',
   'text!templates/album/thumb.html'
-  ], function($, Backbone, Paginator, Handlebars, ResultsTemplate, AlbumThumbTemplate) {
+], function($, Backbone, Paginator, Handlebars, ResultsTemplate, AlbumThumbTemplate) {
 
   return Backbone.View.extend({
     template: Handlebars.compile(ResultsTemplate),
@@ -52,7 +52,7 @@ define([
           console.log(dataEl);
           $('.resultsData').append(Handlebars.compile(AlbumThumbTemplate)({
             albumId: dataEl._id,
-            albumName: dataEl.name,
+            albumName: dataEl.name
           }));
         });
       });

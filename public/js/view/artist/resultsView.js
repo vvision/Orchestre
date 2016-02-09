@@ -5,7 +5,7 @@ define([
   'handlebars',
   'text!templates/results.html',
   'text!templates/artist/thumb.html'
-  ], function($, Backbone, Paginator, Handlebars, ResultsTemplate, ArtistThumbTemplate) {
+], function($, Backbone, Paginator, Handlebars, ResultsTemplate, ArtistThumbTemplate) {
 
   return Backbone.View.extend({
     template: Handlebars.compile(ResultsTemplate),
@@ -52,7 +52,7 @@ define([
           console.log(dataEl);
           $('.resultsData').append(Handlebars.compile(ArtistThumbTemplate)({
             artistId: dataEl._id,
-            artistName: dataEl.name,
+            artistName: dataEl.name
           }));
         });
       });

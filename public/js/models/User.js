@@ -5,6 +5,7 @@ define([
 
   var User = Backbone.Model.extend({
     urlRoot: '/users',
+    idAttribute: '_id',
     defaults: {
       username: null,
       role: null

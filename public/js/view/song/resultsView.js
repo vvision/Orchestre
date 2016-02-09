@@ -6,13 +6,12 @@ define([
   '/js/view/song/songView.js',
   'text!templates/results.html',
   'js/models/Song'
-  ], function($, Backbone, Paginator, Handlebars, SongView, ResultsTemplate, Song) {
+], function($, Backbone, Paginator, Handlebars, SongView, ResultsTemplate, Song) {
 
   return Backbone.View.extend({
     template: Handlebars.compile(ResultsTemplate),
 
     initialize: function (options) {
-      this.orchestre = options.orchestre;
       this.type = options.type;
       this.filter = options.filter;
       this.field = options.field;
@@ -36,7 +35,7 @@ define([
         $('.resultsData').append('<table class="table songList"></table>');
         self.songs.each(function(song) {
           console.log(song);
-          $('.songList').append(new SongView({model: song, orchestre: self.orchestre}).render().el);
+          $('.songList').append(new SongView({model: song}).render().el);
         });
       });
     },

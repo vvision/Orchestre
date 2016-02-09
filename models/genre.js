@@ -4,4 +4,4 @@ var genreSchema = mongoose.Schema({
   name: String
 });
 
-var Genre = mongoose.model('Genre', genreSchema);
+mongoose.model('Genre', genreSchema);

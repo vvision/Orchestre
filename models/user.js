@@ -18,4 +18,4 @@ userSchema.methods.comparePassword = function(candidatePassword, cb) {
   });
 };
 
-var User = mongoose.model('User', userSchema);
+mongoose.model('User', userSchema);

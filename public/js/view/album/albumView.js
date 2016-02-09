@@ -2,19 +2,20 @@ define([
   'jquery',
   'backbone',
   'handlebars',
+  'orchestre',
   'js/models/Album',
   'js/models/Song',
   '/js/view/song/songView.js',
   'text!templates/album/album.html'
-  ], function($, Backbone, Handlebars, Album, Song, SongView, AlbumTemplate) {
+], function($, Backbone, Handlebars, Orchestre, Album, Song, SongView, AlbumTemplate) {
 
   return Backbone.View.extend({
     template: Handlebars.compile(AlbumTemplate),
 
     initialize: function(options) {
       this.albumId = options.albumId;
-      this.orchestre = options.orchestre;
-      this.playlist = options.orchestre.get('playlist');
+      this.player= Orchestre.getOrchestre().player;
+      this.playlist = this.player.get('playlist');
       console.log(this.albumId);
 
       this.album = new Album.Model({id: options.albumId});
@@ -31,7 +32,7 @@ define([
       'click .playAlbum': 'addAlbumToPlaylist'
     },
 
-    addAlbumToPlaylist : function() {
+    addAlbumToPlaylist: function() {
       this.playlist.add(this.songs.models);
     },
 
@@ -40,10 +41,9 @@ define([
     },
 
     renderSongs: function() {
-      var self = this;
       $('.songList').empty();
       this.songs.each(function(song) {
-        $('.songList').append(new SongView({model: song, orchestre: self.orchestre}).render().el);
+        $('.songList').append(new SongView({model: song}).render().el);
       });
     },
 

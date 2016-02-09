@@ -3,16 +3,17 @@ define([
   'backbone',
   'handlebars',
   'bootstrap',
+  'orchestre',
   'sha512',
   'text!templates/login.html',
   'text!templates/alert.html'
-], function($, Backbone, Handlebars, Bootstrap, SHA, LoginTemplate, AlertTemplate) {
+], function($, Backbone, Handlebars, Bootstrap, Orchestre, SHA, LoginTemplate, AlertTemplate) {
 
   return Backbone.View.extend({
     template: Handlebars.compile(LoginTemplate),
 
-    initialize: function(options) {
-      this.user = options.user;
+    initialize: function() {
+      this.user = Orchestre.getOrchestre().user;
     },
 
     events: {

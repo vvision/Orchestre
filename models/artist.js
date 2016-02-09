@@ -6,4 +6,4 @@ var artistSchema = mongoose.Schema({
   img: {type: Boolean, default: false}
 });
 
-var Artist = mongoose.model('Artist', artistSchema);
+mongoose.model('Artist', artistSchema);

@@ -8,6 +8,7 @@ var fs = require('fs');
 var async = require('async');
 var musicmetadata = require('musicmetadata');
 var auth = require('./utils/checkAuth');
+var paginate = require('./utils/paginate');
 
 
 router.get('/', albums);
@@ -18,15 +19,36 @@ router.get('/:id/songs', songsFromAlbum);
 
 module.exports = router;
 
-//TODO: Pagination
-function albums (req, res) {
 
-  Album.find(function (err, docs) {
+function albums (req, res) {
+  var query = req.query.q || '';
+  var currentPage = parseInt(req.query.page) || 1;
+  var size = parseInt(req.query.size) || 50;
+  var skipFrom = (currentPage * size) - size;
+  console.log(req.query);
+
+  Album.count({name: { '$regex': query, '$options': 'i' }}, function(err, nElements) {
     if(err) {
-      console.error(err);
+      console.log(err);
     }
-    console.log(docs);
-    res.send(docs);
+
+    //Total number of pages in header
+    var lastPage = Math.ceil(nElements / size);
+    res.append('X-Total-Count', lastPage);
+
+    paginate(currentPage, nElements, 'albums', query, '', size, req.protocol, function(links) {
+      console.log(links);
+      res.links(links);
+
+      //Find albums matching the query
+      Album.find({name: { '$regex': query, '$options': 'i' }}, {'__v': 0}).sort('name').skip(skipFrom).limit(size).exec(function (err, docs) {
+        console.log(docs);
+        if(err) {
+          console.error(err);
+        }
+        res.send(docs);
+      });
+    });
   });
 }
 

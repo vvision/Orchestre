@@ -6,14 +6,14 @@ var auth = require('./utils/checkAuth');
 var bcrypt = require('bcrypt');
 
 router.get('/', auth.ensureAuthenticated, users);
-router.post('/', auth.ensureAuthenticated, auth.ensureAdmin, createUser);//TODO: Check Admin
+router.post('/', auth.ensureAuthenticated, auth.ensureAdmin, createUser);
 router.get('/:id', aboutUser);
 router.get('/:id/about', aboutUser);
 
 module.exports = router;
 
 function users (req, res) {
-  var pageNumber = req.query.page ? req.query.page : 1;
+  var pageNumber = req.query.page ? parseInt(req.query.page) : 1;
   var resultsPerPage = 50;
   var skipFrom = (pageNumber * resultsPerPage) - resultsPerPage;
 

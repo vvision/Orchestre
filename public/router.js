@@ -1,48 +1,61 @@
 define([
   'backbone',
+  'orchestre',
   'js/view/navbarView',
   'js/view/upcomingView',
   'js/view/aboutView',
   'js/view/loginView',
   'js/view/artist/artistView',
+  'js/view/artist/artistList',
   'js/view/album/albumView',
+  'js/view/album/albumList',
   'js/view/searchView',
   'js/view/playerView',
   'js/view/playlistControlsView',
   'js/view/user/newUserView',
   'js/view/adminView',
+  'js/view/song/songList',
+  'js/view/song/favouritesList',
   'js/models/Song',
   'js/models/User',
-  'js/models/Orchestre'
-], function(Backbone, NavbarView, UpcomingView, AboutView, LoginView,
-    ArtistView, AlbumView, SearchView, PlayerView, PlaylistControlsView,
-    NewUserView, AdminView, Song, User, Orchestre) {
+  'js/models/Player'
+], function(Backbone, Orchestre, NavbarView, UpcomingView, AboutView, LoginView,
+    ArtistView, ArtistListView, AlbumView, AlbumListView, SearchView, PlayerView, PlaylistControlsView,
+    NewUserView, AdminView, SongListView, FavouritesListView,
+    Song, User, Player) {
 
-  var orchestre = new Orchestre();
-  orchestre.set({playlist: new Song.Collection()});
+  var orchestre = Orchestre.getOrchestre();
 
-  var user = new User.Model();
+  orchestre.player = new Player();
+  orchestre.player.set({playlist: new Song.Collection()});
+  orchestre.user = new User.Model();
 
   var Router = Backbone.Router.extend({
 
     initialize: function () {
-      $('header').html(new NavbarView({user: user}).render().el);
-      $('#player').html(new PlayerView({orchestre: orchestre}).render().el);
-      $('#playlistControls').html(new PlaylistControlsView({orchestre: orchestre}).render().el);
+      $('header').html(new NavbarView().render().el);
+      $('#player').html(new PlayerView().render().el);
+      $('#playlistControls').html(new PlaylistControlsView().render().el);
     },
 
     routes: {
       '': 'upcoming',
       'music': 'music',
+      'music/page/:page': 'music',
       'about': 'about',
       'login': 'login',
       'artist': 'artistList',
+      'artist/page/:page': 'artistList',
       'artist/:id': 'artist',
       'album': 'albumList',
+      'album/page/:page': 'albumList',
       'album/:id': 'album',
       'user/new': 'newUser',
       'denied': 'denied',
-      'admin': 'admin'
+      'admin': 'admin',
+      'search': 'search',
+      'favourites': 'favourites',
+      'favourites/page/:page': 'favourites'
     },
 
     admin: function() {
@@ -54,20 +67,20 @@ define([
       $('#content').hide();
       $('#fullPage').show().html(new NewUserView().render().el);
     },
-    albumList: function () {
+    albumList: function (page) {
       $('#fullPage').hide().empty();
       $('#content').show();
-      $('#main').html(new SearchView({orchestre: orchestre, searchObj: 'album'}).render().el);
+      $('#main').html(new AlbumListView({page: page}).render().el);
     },
     album: function(id) {
       $('#fullPage').hide().empty();
       $('#content').show();
-      $('#main').html(new AlbumView({albumId: id, orchestre: orchestre}).render().el);
+      $('#main').html(new AlbumView({albumId: id}).render().el);
     },
-    artistList: function () {
+    artistList: function (page) {
       $('#fullPage').hide().empty();
       $('#content').show();
-      $('#main').html(new SearchView({orchestre: orchestre, searchObj: 'artist'}).render().el);
+      $('#main').html(new ArtistListView({page: page}).render().el);
     },
     artist: function (id) {
       $('#fullPage').hide().empty();
@@ -79,10 +92,20 @@ define([
       $('#fullPage').show().html(new UpcomingView().render().el);
     },
 
-    music: function () {
+    music: function (page) {
       $('#fullPage').hide().empty();
       $('#content').show();
-      $('#main').html(new SearchView({orchestre: orchestre, searchObj: 'song'}).render().el);
+      $('#main').html(new SongListView({page: page}).render().el);
+    },
+    search: function () {
+      $('#fullPage').hide().empty();
+      $('#content').show();
+      $('#main').html(new SearchView({searchObj: 'song'}).render().el);
+    },
+    favourites: function (page) {
+      $('#fullPage').hide().empty();
+      $('#content').show();
+      $('#main').html(new FavouritesListView({page: page}).render().el);
     },
     about: function() {
       $('#content').hide();
@@ -90,7 +113,7 @@ define([
     },
     login: function() {
       $('#content').hide();
-      $('#fullPage').show().html(new LoginView({user: user}).render().el);
+      $('#fullPage').show().html(new LoginView().render().el);
     },
     denied: function () {
       $('#content').hide();
@@ -99,45 +122,20 @@ define([
     }
   });
 
-  window.router = new Router();
-
+  Orchestre.getOrchestre().router = new Router();
   Backbone.history.start({pushState: true});
 
-  $('body').on('click', 'a', function(e){
-    // If you have external links handle it here
-    e.preventDefault();
-    var $a = $(e.target).closest('a');
-    var href = $a.attr('href');
+  $(document).on('click', 'a:not([data-bypass])', function(evt) {
+    var href = {
+      prop: $(this).prop('href'),
+      attr: $(this).attr('href')
+    };
+    var root = location.protocol + '//' + location.host + Backbone.history.options.root;
 
-    if(href === '#') {
-      return; // Escape the null link
-    }
-    if(href.indexOf('http') !== -1) {
-      return; // Escape external links
-    }
-    if(href.indexOf('mailto') !== -1) {
-      return; // Escape external links
-    }
-    if(href.indexOf('download') !== -1) {
-      return; // Escape link to server
-    }
-
-    if (href === '/logout') {
-      $.ajax({
-        url: '/auth/logout',
-        type: 'POST',
-        success: function() {
-          sessionStorage.clear();
-          user.clear();
-
-          router.navigate('', true);
-        },
-        error: function(err) {
-          console.log(err);
-        }
-      });
-    } else {
-      router.navigate(href, true);
+    if (href.prop && href.prop.slice(0, root.length) === root) {
+      evt.preventDefault();
+      Backbone.history.navigate(href.attr, true);
     }
   });
+
 });

@@ -5,6 +5,7 @@ define([
 
   var Song = Backbone.Model.extend({
     urlRoot: '/songs',
+    idAttribute: '_id',
     defaults: {
       songId: null,
       albumId: null,
@@ -13,8 +14,10 @@ define([
       album: 'Unknwon Album',
       rate: 0,
       track: 0,
+      duration: 0,
       genre: 'Unknown Genre',
-      type: null
+      type: null,
+      favs: []
     }
   });
 

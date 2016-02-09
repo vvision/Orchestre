@@ -1,31 +1,21 @@
 <span class="song {{songId}}">
   <td>
-
-    <span class="dropdown">
-      <button class="btn btn-info btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="true">
-        <span class="glyphicon glyphicon-play"></span>
-        <span class="caret"></span>
-      </button>
-
-      <ul class="dropdown-menu" role="menu">
-        <li>
-          <span class="song-controls-listen-now {{songId}}">Listen</span>
-        </li>
-        <li class="divider"></li>
-        <li>
-          <span class="song-controls-listen-next {{songId}}">Play next</span>
-        </li>
-        <li>
-          <span class="song-controls-listen-end {{songId}}">Play at end</span>
-        </li>
-      </ul>
-    </span>
+    <span class="song-controls-listen-now glyphicon glyphicon-play" aria-hidden="true"></span>
+  </td>
+  <!--
+  <td>
+    <span class="song-controls-listen-next glyphicon glyphicon-plus" aria-hidden="true"></span>
+  </td>
+  -->
+  <td>
+    <span class="song-controls-listen-end glyphicon glyphicon-plus" aria-hidden="true"></span>
   </td>
 
   <td class="track">{{trackNumber}}</td>
   <td class="title">{{songTitle}}</td>
   <td class="artist {{artistId}}">{{artistName}}</td>
   <td class="album {{albumId}}">{{albumTitle}}</td>
+  <td class="duration">{{duration}}</td>
   <td class="type">
     <span class="label {{type}}">{{type}}</span>
   </td>
@@ -39,11 +29,7 @@
       <span class="glyphicon glyphicon-download"></span>
     </a>
   </td>
-  <!-- DEPRECATED><-->
-  <td class="rateInfo {{songId}}">
-    <button type="button" class="rateDec btn btn-info btn-sm">-</button>
-    <span class="rate {{songId}} badge">{{rated}}</span>
-    <button type="button" class="rateInc btn btn-info btn-sm">+</button>
+  <td>
+    <span class="song-favourite glyphicon glyphicon-heart-empty" aria-hidden="true"></span>
   </td>
-  <!-- DEPRECATED><-->
 </span>

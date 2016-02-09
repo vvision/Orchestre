@@ -2,18 +2,19 @@ define([
   'jquery',
   'backbone',
   'handlebars',
+  'orchestre',
   'text!templates/header/navbar.html',
   'text!templates/header/loginMenu.html',
   'text!templates/header/userMenu.html',
   'text!templates/header/adminMenu.html',
   'text!templates/header/authMenu.html'
-], function($, Backbone, Handlebars, NavbarTemplate, LoginMenuTemplate, UserMenuTemplate, AdminMenuTemplate, AuthMenuTemplate) {
+], function($, Backbone, Handlebars, Orchestre, NavbarTemplate, LoginMenuTemplate, UserMenuTemplate, AdminMenuTemplate, AuthMenuTemplate) {
 
   return Backbone.View.extend({
     template: Handlebars.compile(NavbarTemplate),
 
-    initialize: function(options) {
-      this.user = options.user;
+    initialize: function() {
+      this.user = Orchestre.getOrchestre().user;
       this.user.on('change', this.renderUserMenu, this);
 
       if(this.user.get('username') == null) {
@@ -31,7 +32,26 @@ define([
       }
     },
 
-    events: {},
+    events: {
+      'click .menu-user-logout': 'logoutUser'
+    },
+
+    logoutUser: function() {
+      var self = this;
+      var router = Orchestre.getOrchestre().router;
+      $.ajax({
+        url: '/auth/logout',
+        type: 'POST',
+        success: function() {
+          sessionStorage.clear();
+          self.user.clear();
+          router.navigate('', true);
+        },
+        error: function(err) {
+          console.log(err);
+        }
+      });
+    },
 
     renderUserMenu: function() {
       console.log(this.user);

@@ -1,6 +1,8 @@
 var express = require('express');
 var router = express.Router();
 var passport = require('passport');
+var mongoose = require('mongoose');
+var User = mongoose.model('User');
 
 router.post('/login', login);
 router.get('/status', status);
@@ -32,9 +34,9 @@ function login (req, res, next) {
 
 function status (req, res, next) {
   if(req.user.username && req.user.role) {
-    res.send({
-      username: req.user.username,
-      role: req.user.role
+    User.findOne({username: req.user.username}, {'password': 0}, function(err, doc) {
+      console.log(doc);
+      res.send(doc);
     });
   } else {
     var error = new Error('Not currently logged in.');

@@ -8,11 +8,13 @@ var songSchema = mongoose.Schema({
   dir: String,
   rate: Number,
   trackNumber: Number,
+  duration: Number,
   artist: String,
   album: String,
   albumId: String,
   genre: [String],
-  type: String
+  type: String,
+  favs: [String]
 });
 
-var Song = mongoose.model('Song', songSchema);
+mongoose.model('Song', songSchema);

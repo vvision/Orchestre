@@ -4,11 +4,20 @@ define([
 ], function($, Backbone) {
 
   var Album = Backbone.Model.extend({
-    urlRoot: '/albums'
+    urlRoot: '/albums',
+    idAttribute: '_id'
   });
 
   var Albums = Backbone.Collection.extend({
-    model: Album
+    model: Album,
+    url: '/albums',
+    search: function(params, callback) {
+      this.fetch({
+        data: params,
+        reset: true,
+        success: callback
+      });
+    }
   });
 
   return {

@@ -1,6 +1,6 @@
 {
   "name": "Orchestre",
-  "version": "0.1.4",
+  "version": "0.2.3",
   "author": "Victor Voisin (vvision) <email>victor.voisin@vvoisin.org</email>",
   "description": "Orchestre is a streaming plateform which focus on playing flac files in the browser.",
   "license": "GPL-3.0",
@@ -34,7 +34,8 @@
     "passport": "~0.3.2",
     "passport-local": "~1.0.0",
     "bcrypt": "~0.8.5",
-    "readline-sync": "~1.2.21"
+    "readline-sync": "~1.2.21",
+    "avconv": "~3.0.1"
   },
   "devDependencies": {
     "mocha": "~2.3.3",
@@ -46,7 +47,7 @@
     "jssha": "~2.0.1",
     "jquery": "~2.1.4",
     "jquery-ui-bundle": "~1.11.4",
-    "av": "~0.4.4",
+    "av": "~0.4.7",
     "flac.js": "~0.2.1",
     "backbone": "~1.2.3",
     "backbone.paginator": "~2.0.2",
